@@ -1,0 +1,28 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'com.ykgroup'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-zuul', version: '2.2.1.RELEASE'
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-server', version: '2.2.1.RELEASE'
+    runtime group: 'org.springframework.cloud', name: 'spring-cloud-dependencies', version: 'Hoxton.SR2', ext: 'pom'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
