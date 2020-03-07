@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: ${rootProject.name}
+    version: ${version}
   h2:
     console:
       enabled: true
