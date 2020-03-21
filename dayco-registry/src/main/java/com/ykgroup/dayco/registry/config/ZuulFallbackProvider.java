@@ -1,4 +1,4 @@
-package com.ykgroup.dayco.gateway.config;
+package com.ykgroup.dayco.registry.config;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class ZuulFallbackProvider implements FallbackProvider {
                 if(status == HttpStatus.GATEWAY_TIMEOUT) {
                     return new ByteArrayInputStream("Failed to handle the request in given thread time".getBytes());
                 } else {
-                    return new ByteArrayInputStream("Failed server error ".getBytes());
+                    return new ByteArrayInputStream("Failed to handle the request in given thread time".getBytes());
                 }
             }
 

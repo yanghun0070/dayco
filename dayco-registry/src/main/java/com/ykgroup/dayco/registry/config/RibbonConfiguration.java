@@ -1,4 +1,4 @@
-package com.ykgroup.dayco.gateway.config;
+package com.ykgroup.dayco.registry.config;
 
 import org.springframework.context.annotation.Bean;
 
@@ -17,7 +17,7 @@ public class RibbonConfiguration {
      */
     @Bean
     public IPing ribbonPing(final IClientConfig config) {
-        return new PingUrl(false, "/actuator/health");
+        return new PingUrl(false, "/health");
     }
 
     /**

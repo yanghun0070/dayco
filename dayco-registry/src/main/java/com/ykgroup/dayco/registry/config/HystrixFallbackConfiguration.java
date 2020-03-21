@@ -1,4 +1,4 @@
-package com.ykgroup.dayco.gateway.config;
+package com.ykgroup.dayco.registry.config;
 
 import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
 import org.springframework.context.annotation.Bean;
