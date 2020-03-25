@@ -1,27 +1,13 @@
 server:
   port: 8761
 
-# https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html
-zuul:
-  ignoredServices: '*'
-  prefix: /v1
-  routes:
-    hello:
-      path: /hello/**
-      stripPrefix: false
-
-ribbon:
-  eureka:
-    enabled: false
-
 eureka:
+  instance:
+    preferIpAddress: true
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
     healthcheck:
       enabled: true
-
-hello:
-  ribbon:
-    listOfServers: http://localhost:8080
-
+    registerWithEureka: false # Eureka 서비스에 등록하지 않음
+    fetchRegistry: true # Register 정보를 local 에 캐싱하지 않음
