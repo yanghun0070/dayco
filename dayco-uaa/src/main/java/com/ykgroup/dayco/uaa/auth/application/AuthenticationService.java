@@ -1,29 +1,29 @@
 package com.ykgroup.dayco.uaa.auth.application;
 
-import static org.springframework.http.ResponseEntity.ok;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
 import com.ykgroup.dayco.uaa.auth.config.JwtTokenProvider;
+import com.ykgroup.dayco.uaa.auth.exception.InvalidJwtAuthenticationException;
 import com.ykgroup.dayco.uaa.user.application.UserService;
 import com.ykgroup.dayco.uaa.user.domain.User;
 
@@ -34,23 +34,32 @@ public class AuthenticationService {
     private AuthenticationManager authenticationManager;
     private UserService userService;
     private JwtTokenProvider jwtTokenProvider;
-    private UaaUserDetailService uaaUserDetailService;
 
     public AuthenticationService(
             AuthenticationManager authenticationManager,
-            UserService userService, JwtTokenProvider jwtTokenProvider,
-            UaaUserDetailService uaaUserDetailService) {
+            UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
-        this.uaaUserDetailService = uaaUserDetailService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public ResponseEntity signIn(@RequestBody AuthenticationRequest authRequest, HttpServletResponse res)  {
+    public void signUp(AuthenticationRequest authRequest, HttpServletResponse res) {
+        try {
+            userService.join(authRequest.getUsername(), authRequest.getPassword());
+            String userName = authRequest.getUsername();
+            final Authentication authentication =
+                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, authRequest.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (AuthenticationException e) {
+            throw new InvalidJwtAuthenticationException("signup fail", e);
+        }
+    }
+
+    public Map<String, String> signIn(AuthenticationRequest authRequest, HttpSession session, HttpServletResponse res)  {
         try {
             String userName = authRequest.getUsername();
             Optional<User> optionalUser = userService.findByUserId(userName);
-            Authentication authentication = null;
+            Authentication authentication;
             if(optionalUser.isEmpty()) {
                 authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, authRequest.getPassword()));
             } else {
@@ -60,6 +69,8 @@ public class AuthenticationService {
             }
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                                 SecurityContextHolder.getContext());
             logger.info("Successful authentication. Security context contains: "
                                + SecurityContextHolder.getContext().getAuthentication());
 
@@ -75,9 +86,17 @@ public class AuthenticationService {
             Map<String, String> model = new HashMap<>();
             model.put("username", userName);
             model.put("token", token);
-            return ok(model);
-        }catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username/password supplied");
+            return model;
+        } catch (AuthenticationException e) {
+            throw new InvalidJwtAuthenticationException("login fail", e);
         }
+    }
+
+    public Map<String, String> refresh(HttpServletRequest request) {
+        String resolveToken = jwtTokenProvider.resolveToken(request);
+        Map<String, String> model = new HashMap<>();
+        model.put("username", jwtTokenProvider.getUsername(resolveToken));
+        model.put("token", jwtTokenProvider.refreshToken(resolveToken));
+        return model;
     }
 }

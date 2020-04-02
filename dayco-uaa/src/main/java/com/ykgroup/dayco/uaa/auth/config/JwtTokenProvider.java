@@ -55,10 +55,25 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String refreshToken(String token) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        return Jwts.builder()
+            .setClaims(getClaims(token))
+            .setIssuedAt(now)
+            .setExpiration(validity)
+            .signWith(SignatureAlgorithm.HS256, secretKey)
+            .compact();
+    }
+
+    public Claims getClaims(String token) {
+        return Jwts.parser().setSigningKey(secretKey)
+                   .parseClaimsJws(token)
+                   .getBody();
+    }
+
     public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(secretKey).
-                parseClaimsJws(token)
-                .getBody()
+        return getClaims(token)
                 .getSubject();
     }
 

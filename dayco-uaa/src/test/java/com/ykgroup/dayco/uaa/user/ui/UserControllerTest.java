@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
 import com.ykgroup.dayco.uaa.user.domain.User;
 
 @TestMethodOrder(OrderAnnotation.class)
@@ -30,23 +33,32 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Order(1)
-    @Test
-    public void testJoin() throws Exception {
+    private String authorizationHeader;
+
+    @BeforeEach
+    public void init() throws Exception {
         this.mockMvc.perform(
-                post("/user/join")
+                post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON).content(
                         objectMapper.writeValueAsString(
-                                new User("username", "password"))
+                                new AuthenticationRequest("username", "password"))
                 ))
                     .andDo(print())
                     .andExpect(status().isOk());
+        MvcResult result = mockMvc.perform(post("/auth/signin")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new AuthenticationRequest("username",
+                                                                  "password"))))
+                                 .andDo(print())
+                                 .andReturn();
+        authorizationHeader = result.getResponse().getHeader("Authorization");
     }
 
-    @Order(2)
     @Test
     public void testUser() throws Exception {
-        this.mockMvc.perform(get("/user/username"))
+        this.mockMvc.perform(get("/user/username")
+                                     .header("Authorization", authorizationHeader))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.userId").value("username"))
@@ -55,10 +67,10 @@ public class UserControllerTest {
                     .andExpect(jsonPath("$.userAuthorizations[0].roleName").value("USER"));
     }
 
-    @Order(3)
     @Test
     public void testUserThenSuccessful() throws Exception {
-        this.mockMvc.perform(get("/user/wrongname"))
+        this.mockMvc.perform(get("/user/wrongname")
+                                     .header("Authorization", authorizationHeader))
                     .andDo(print())
                     .andExpect(status().is2xxSuccessful());
     }

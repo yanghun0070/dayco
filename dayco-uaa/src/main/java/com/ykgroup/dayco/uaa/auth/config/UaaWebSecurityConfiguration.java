@@ -35,11 +35,6 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public JwtTokenFilter authenticationTokenFilterBean() {
-        return new JwtTokenFilter(jwtTokenProvider);
-    }
-
-    @Bean
     public AccessDecisionManager accessDecisionManager() {
         return new DefaultAccessDecisionManager();
     }
@@ -64,7 +59,7 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers("/auth/signin", "/manager/**").permitAll()
+            .antMatchers("/auth/signin", "/auth/signup", "/manager/**").permitAll()
             .anyRequest().authenticated()
             .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                 public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
@@ -80,7 +75,7 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .apply(new JwtConfigurer(jwtTokenProvider));
 
         http
-            .addFilterBefore(authenticationTokenFilterBean(),
+            .addFilterBefore(new JwtTokenFilter(jwtTokenProvider),
                              UsernamePasswordAuthenticationFilter.class);
 
     }

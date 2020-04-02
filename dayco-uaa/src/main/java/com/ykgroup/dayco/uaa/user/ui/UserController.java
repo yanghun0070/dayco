@@ -22,11 +22,6 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("join")
-    public void join(@RequestBody User user) {
-        userService.join(user);
-    }
-
     @GetMapping("{userId}")
     public Optional<User> getUser(@PathVariable String userId) {
         return userService.findByUserId(userId);
