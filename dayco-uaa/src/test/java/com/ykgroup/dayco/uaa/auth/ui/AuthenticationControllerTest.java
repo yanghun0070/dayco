@@ -1,33 +1,27 @@
 package com.ykgroup.dayco.uaa.auth.ui;
 
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Optional;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
-import com.ykgroup.dayco.uaa.manager.domain.UserAuthorization;
-import com.ykgroup.dayco.uaa.user.domain.User;
-import com.ykgroup.dayco.uaa.user.infra.UserJpaRepository;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestMethodOrder(OrderAnnotation.class)
 public class AuthenticationControllerTest {
 
     @Autowired
@@ -36,21 +30,20 @@ public class AuthenticationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private UserJpaRepository userJpaRepository;
 
-    @Before
-    public void init() {
-        User user = new User("user",
-                 new BCryptPasswordEncoder().encode("password"),
-                 99,
-                 1,
-                 "n@n.m");
-        user.addUserAuthorization(new UserAuthorization(user, "USER"));
-        when(userJpaRepository.findByUserId("user"))
-                .thenReturn(Optional.of(user));
+    @Order(1)
+    @Test
+    public void signUpWithValidUserThenSuccessful() throws Exception {
+        mockMvc.perform(post("/auth/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new AuthenticationRequest("user",
+                                                                  "password"))))
+               .andDo(print())
+               .andExpect(status().is2xxSuccessful());
     }
 
+    @Order(2)
     @Test
     public void signInWithValidUserThenSuccessful() throws Exception {
         mockMvc.perform(post("/auth/signin")
@@ -62,6 +55,7 @@ public class AuthenticationControllerTest {
                .andExpect(status().is2xxSuccessful());
     }
 
+    @Order(2)
     @Test
     public void signInWithInvalidUserThenUnauthenticated() throws Exception {
         mockMvc.perform(post("/auth/signin")
@@ -73,6 +67,7 @@ public class AuthenticationControllerTest {
                .andExpect(status().isUnauthorized());
     }
 
+    @Order(2)
     @Test
     public void signInWithWrongPasswordThenUnauthenticated() throws Exception {
         mockMvc.perform(post("/auth/signin")
@@ -82,5 +77,29 @@ public class AuthenticationControllerTest {
                                                                   "wrongpassword"))))
                .andDo(print())
                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void refreshThenChangedToken() throws Exception {
+        mockMvc.perform(post("/auth/signup")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new AuthenticationRequest("testuser",
+                                                                  "testuser"))))
+               .andDo(print())
+               .andExpect(status().is2xxSuccessful());
+        MvcResult result = mockMvc.perform(post("/auth/signin")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(
+                                        new AuthenticationRequest("testuser",
+                                                                  "testuser"))))
+                                  .andReturn();
+
+        String authorizationHeader = result.getResponse().getHeader("Authorization");
+        MvcResult refreshResult = mockMvc.perform(post("/auth/refresh")
+                                .header("Authorization", authorizationHeader)
+                                .contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        assertNotEquals(authorizationHeader, refreshResult.getResponse().getHeader("Authorization"));
     }
 }
