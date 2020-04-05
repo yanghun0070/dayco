@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ykgroup.dayco.uaa.auth.application.UaaUserDetailService;
 import com.ykgroup.dayco.uaa.manager.application.ManagerService;
@@ -54,6 +57,7 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .httpStrictTransportSecurity().disable();
 
         http
+            .cors().and()
             .csrf().disable()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -104,5 +108,18 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
         }
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

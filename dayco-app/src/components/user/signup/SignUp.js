@@ -27,13 +27,7 @@ class SignUp extends Component {
 	}
 
 	onSignup = () => {
-		this.props.join(this.state.requestId, this.state.requestPw, this.state.requestPwConfirm)
-		.then(() => {
-			if(this.props.user.authenticated == true
-				&& this.props.user.joined == true) {
-					this.props.history.push('/login');
-				}
-		  });
+		this.props.join(this.state.requestId, this.state.requestPw, this.state.requestPwConfirm);
 	}
 
 	render(){
@@ -77,12 +71,19 @@ class SignUp extends Component {
 								</Form.Group>
 							</Form>
 							{(this.props.user.authenticated == true && 
-								this.props.user.joined == false) ?
+								this.props.user.joined == true) ?
+								<Alert variant="success">
+									회원가입 되었습니다.
+								</Alert>
+								: ""
+							}
+							{(this.props.user.authenticated == true && 
+							this.props.user.joined == false) ?
 								<Alert variant="danger">
 									ID / PW 확인하세요.
 								</Alert>
-								: ""
-								}
+							: ""
+							}
 						</Card.Body>
 					</Card>
 					</Col>

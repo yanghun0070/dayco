@@ -2,18 +2,17 @@ import axios from 'axios';
 import Cookie from "js-cookie";
 
 export function joinUser(userId, password, confirmPassword) {
-    return axios.post("http://localhost:8000/api/user/join",{
+    return axios.post("http://localhost:9999/auth/signup",{
         headers: {
             'Content-type': 'application/json'
         },
-        userId: userId,
-        password: password,
-        confirmPassword: confirmPassword
+        username: userId,
+        password: password
     });
 }
 
 export function loginUser(userId, password) {
-    return axios.post("http://localhost:8000/api/user/login",{
+    return axios.post("http://localhost:9999/auth/signin",{
         headers: {
             'Content-type': 'application/json'
          },

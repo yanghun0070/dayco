@@ -4,6 +4,7 @@ import Alert from 'react-bootstrap/Alert';
 import { login } from '../../../actions/user';
 import {connect} from 'react-redux';
 import { withRouter } from "react-router";
+import { FacebookLoginButton, GoogleLoginButton, GithubLoginButton} from "react-social-login-buttons";
 
 class Login extends Component {
 
@@ -60,10 +61,17 @@ class Login extends Component {
 											<Button className="loginBtn" size="sm" block onClick={this.onLogin}>Log In</Button>
 										</Col>
 									</Form.Group>
+									<Form.Group as={Row}>
+										<Col sm="12">
+											<FacebookLoginButton size={30} onClick={() => alert("Hello")} />
+											<GoogleLoginButton size={30} onClick={() => alert("Hello")} />
+											<GithubLoginButton size={30} onClick={() => alert("Hello")} />
+										</Col>
+									</Form.Group>
 								</Form>
 								{(this.props.user.authenticated == true
 								&& this.props.user.logon == true) ?
-									<Alert color="success">
+									<Alert variant="success">
 									로그인 되었습니다.
 									</Alert>: ""
 								}
