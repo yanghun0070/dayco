@@ -12,7 +12,8 @@ class SignUp extends Component {
 		this.state = {
 			requestId:'',
 			requestPw:'',
-			requestPwConfirm: ''
+			requestPwConfirm: '',
+			requestEmail: ''
 		};
 	}
 
@@ -22,12 +23,15 @@ class SignUp extends Component {
 	requestPwChange = pw => {
 		this.setState({requestPw : pw});
 	}
+	requestEmailChange = email => {
+		this.setState({requestEmail: email})
+	}
 	requestPwConfirmChange = pwConfirm => {
 		this.setState({requestPwConfirm : pwConfirm});
 	}
 
 	onSignup = () => {
-		this.props.join(this.state.requestId, this.state.requestPw, this.state.requestPwConfirm);
+		this.props.join(this.state.requestId, this.state.requestEmail, this.state.requestPw, this.state.requestPwConfirm);
 	}
 
 	render(){
@@ -47,6 +51,13 @@ class SignUp extends Component {
 									<Col sm="8">
 										<Form.Control type="text" name="requestId" id="requestId" placeholder="ID 를 입력하세요."
 											onChange={e => this.requestIdChange(e.target.value)} value={this.state.requestId}/>
+									</Col>
+								</Form.Group>
+								<Form.Group as={Row}>
+									<Form.Label column sm="4">Email</Form.Label>
+									<Col sm="8">
+										<Form.Control type="text" name="requestEmail" id="requestEmail" placeholder="Email 를 입력하세요."
+											onChange={e => this.requestEmailChange(e.target.value)} value={this.state.requestEmail}/>
 									</Col>
 								</Form.Group>
 								<Form.Group as={Row}>
@@ -78,6 +89,13 @@ class SignUp extends Component {
 								: ""
 							}
 							{(this.props.user.authenticated == true && 
+							this.props.user.joined == false) ?
+								<Alert variant="success">
+									로그인 되었습니다.
+								</Alert>
+							: ""
+							}
+							{(this.props.user.authenticated == false && 
 							this.props.user.joined == false) ?
 								<Alert variant="danger">
 									ID / PW 확인하세요.

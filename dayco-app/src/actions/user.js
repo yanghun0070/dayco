@@ -42,9 +42,10 @@ export function joinSuccess(userId) {
 /**
  * 회원가입 실패
  */
-export function joinFail() {
+export function joinFail(message) {
     return {
-        type: types.user.JOIN_FAIL
+        type: types.user.JOIN_FAIL,
+        message
     };
 }
 
@@ -57,6 +58,18 @@ export function loginFail() {
     };
 }
 
+export function currentUserSuccess(currentUser) {
+    return {
+        type: types.user.CURRENT_USER_SUCCESS,
+        currentUser
+    }
+}
+
+export function currentUserFail() {
+    return {
+        type: types.user.CURRENT_USER_FAIL,
+    }
+}
 /**
  * 로그인
  * @method login
@@ -66,7 +79,8 @@ export function login(userId, password) {
     return dispatch => {
         return  API.loginUser(userId, password)
             .then(async(response) => {
-                dispatch(loginSuccess(response.data.userId, response.data.token));
+                var result = response.data.result
+                dispatch(loginSuccess(result.username, result.token));
             }).catch(function (error) {
                 dispatch(loginFail());
             })
@@ -77,16 +91,31 @@ export function login(userId, password) {
  * 회원 가입
  * @method join
  * @param {string} userId
+ * @param {String} email
  * @param {string} password
  * @param {string} confirmPassword
  */
-export function join(userId, password, confirmPassword) {
+export function join(userId, email, password, confirmPassword) {
     return dispatch => {
-        return API.joinUser(userId, password, confirmPassword)
-            .then(async() => {
+        return API.joinUser(userId, email, password, confirmPassword)
+            .then(async(response) => {
                 dispatch(joinSuccess(userId));
             }).catch(function (error) {
-                dispatch(joinFail());
+                dispatch(joinFail(error.message));
             })
+    };
+}
+
+/**
+ * 로그인 시에 현재 유저 정보를 조회
+ */
+export function getCurrentUser() {
+    return dispatch => {
+        return API.getCurrentUser()
+            .then(async(response) => {
+                dispatch(currentUserSuccess(response.data));
+            }).catch(function (error) {
+                dispatch(currentUserFail());
+            });
     };
 }

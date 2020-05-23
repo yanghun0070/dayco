@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
-import com.ykgroup.dayco.uaa.user.domain.User;
+import com.ykgroup.dayco.uaa.auth.dto.SessionUser;
 
 @TestMethodOrder(OrderAnnotation.class)
 @SpringBootTest
@@ -41,14 +39,15 @@ public class UserControllerTest {
                 post("/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON).content(
                         objectMapper.writeValueAsString(
-                                new AuthenticationRequest("username", "password"))
+                                new SessionUser("username", "a@n.m", "password"))
                 ))
                     .andDo(print())
                     .andExpect(status().isOk());
         MvcResult result = mockMvc.perform(post("/auth/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                        new AuthenticationRequest("username",
+                                        new SessionUser("username",
+                                                        "a@n.m",
                                                                   "password"))))
                                  .andDo(print())
                                  .andReturn();

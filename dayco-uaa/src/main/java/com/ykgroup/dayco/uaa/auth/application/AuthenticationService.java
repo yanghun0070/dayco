@@ -21,8 +21,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
-import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
 import com.ykgroup.dayco.uaa.auth.config.JwtTokenProvider;
+import com.ykgroup.dayco.uaa.auth.dto.SessionUser;
 import com.ykgroup.dayco.uaa.auth.exception.InvalidJwtAuthenticationException;
 import com.ykgroup.dayco.uaa.user.application.UserService;
 import com.ykgroup.dayco.uaa.user.domain.User;
@@ -43,28 +43,28 @@ public class AuthenticationService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public void signUp(AuthenticationRequest authRequest, HttpServletResponse res) {
+    public void signUp(SessionUser sessionUser, HttpServletResponse res) {
         try {
-            userService.join(authRequest.getUsername(), authRequest.getPassword());
-            String userName = authRequest.getUsername();
+            userService.join(sessionUser.getUserId(), sessionUser.getPassword(), sessionUser.getEmail());
+            String userName = sessionUser.getUserId();
             final Authentication authentication =
-                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, authRequest.getPassword()));
+                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, sessionUser.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } catch (AuthenticationException e) {
             throw new InvalidJwtAuthenticationException("signup fail", e);
         }
     }
 
-    public Map<String, String> signIn(AuthenticationRequest authRequest, HttpSession session, HttpServletResponse res)  {
+    public Map<String, String> signIn(SessionUser sessionUser, HttpSession session, HttpServletResponse res)  {
         try {
-            String userName = authRequest.getUsername();
+            String userName = sessionUser.getUserId();
             Optional<User> optionalUser = userService.findByUserId(userName);
             Authentication authentication;
             if(optionalUser.isEmpty()) {
-                authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, authRequest.getPassword()));
+                authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, sessionUser.getPassword()));
             } else {
                 authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName,
-                                                                                                        authRequest.getPassword(),
+                                                                                                        sessionUser.getPassword(),
                                                                                                         optionalUser.get().getAuthorities()));
             }
 

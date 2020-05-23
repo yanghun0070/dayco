@@ -23,7 +23,7 @@ public class UaaUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.userJpaRepository.findByUserId(username).orElseThrow(
                 () -> new UsernameNotFoundException("Username: " + username + " not found"));
-        return org.springframework.security.core.userdetails.User.withUsername(user.getUserId())
+         org.springframework.security.core.userdetails.User.withUsername(user.getUserId())
                    .password(user.getPassword())
                    .roles(
                            String.join(",", user.getUserAuthorizations()
@@ -31,5 +31,6 @@ public class UaaUserDetailService implements UserDetailsService {
                                                 .collect(Collectors.toList()))
                    )
                    .build();
+        return  user;
     }
 }

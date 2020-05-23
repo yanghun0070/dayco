@@ -3,6 +3,7 @@ package com.ykgroup.dayco.uaa.auth.config;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -15,9 +16,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Component;
 
+import com.sun.security.auth.UserPrincipal;
 import com.ykgroup.dayco.uaa.auth.exception.InvalidJwtAuthenticationException;
+import com.ykgroup.dayco.uaa.user.domain.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -40,6 +44,25 @@ public class JwtTokenProvider {
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+    }
+
+    public String createToken(DefaultOAuth2User oAuth2User, String registrationId) {
+        Map<String, Object> userAttributes =  oAuth2User.getAttributes();
+
+        String subject = "";
+        if("github".equals(registrationId)) {
+            subject = (String) userAttributes.get("login");
+        } else { //Google, Naver 는 ID 대신 이름으로 대체
+            subject = (String) userAttributes.get("name");
+        }
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + validityInMilliseconds);
+        return Jwts.builder()
+                   .setSubject(subject)
+                   .setIssuedAt(new Date())
+                   .setExpiration(expiryDate)
+                   .signWith(SignatureAlgorithm.HS512, secretKey)
+                   .compact();
     }
 
     public String createToken(String username, List<String> roles) {
