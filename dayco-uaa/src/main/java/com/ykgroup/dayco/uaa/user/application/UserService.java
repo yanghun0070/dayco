@@ -24,8 +24,8 @@ public class UserService {
         return userJpaRepository.findByUserId(userId);
     }
 
-    public void join(String userId, String password) {
-        User changedUser = new User(userId, password);
+    public void join(String userId, String password, String email) {
+        User changedUser = new User(userId, password, email);
         changedUser.addUserAuthorization(new UserAuthorization(changedUser, "USER"));
         userJpaRepository.save(changedUser);
     }

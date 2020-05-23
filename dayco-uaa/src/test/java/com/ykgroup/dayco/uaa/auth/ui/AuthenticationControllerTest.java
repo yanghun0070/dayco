@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
+import com.ykgroup.dayco.uaa.auth.dto.SessionUser;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -30,15 +30,15 @@ public class AuthenticationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-
     @Order(1)
     @Test
     public void signUpWithValidUserThenSuccessful() throws Exception {
         mockMvc.perform(post("/auth/signup")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                        new AuthenticationRequest("user",
-                                                                  "password"))))
+                                        new SessionUser("user",
+                                                        "a@n.m",
+                                                        "password"))))
                .andDo(print())
                .andExpect(status().is2xxSuccessful());
     }
@@ -49,7 +49,8 @@ public class AuthenticationControllerTest {
         mockMvc.perform(post("/auth/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                        new AuthenticationRequest("user",
+                                        new SessionUser("user",
+                                                        "a@n.m",
                                                                   "password"))))
                .andDo(print())
                .andExpect(status().is2xxSuccessful());
@@ -61,8 +62,10 @@ public class AuthenticationControllerTest {
         mockMvc.perform(post("/auth/signin")
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsString(
-                                                      new AuthenticationRequest("invalid",
-                                                                                "invalidpassword"))))
+                                                      new SessionUser("invalid",
+                                                                                "a@n.m",
+                                                                                "invalidpassword"
+                                                                                ))))
                .andDo(print())
                .andExpect(status().isUnauthorized());
     }
@@ -73,8 +76,10 @@ public class AuthenticationControllerTest {
         mockMvc.perform(post("/auth/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                        new AuthenticationRequest("user",
-                                                                  "wrongpassword"))))
+                                        new SessionUser("user",
+                                                                  "a@n.m",
+                                                                  "wrongpassword"
+                                                                  ))))
                .andDo(print())
                .andExpect(status().isUnauthorized());
     }
@@ -84,15 +89,19 @@ public class AuthenticationControllerTest {
         mockMvc.perform(post("/auth/signup")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                        new AuthenticationRequest("testuser",
-                                                                  "testuser"))))
+                                        new SessionUser("testuser",
+                                                        "a@n.m",
+                                                        "testuser"
+                                                                  ))))
                .andDo(print())
                .andExpect(status().is2xxSuccessful());
         MvcResult result = mockMvc.perform(post("/auth/signin")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(
-                                        new AuthenticationRequest("testuser",
-                                                                  "testuser"))))
+                                        new SessionUser("testuser",
+                                                        "a@n.m",
+                                                        "testuser"
+                                                                  ))))
                                   .andReturn();
 
         String authorizationHeader = result.getResponse().getHeader("Authorization");

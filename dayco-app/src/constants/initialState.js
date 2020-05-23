@@ -8,6 +8,7 @@ export default {
           joined: false,
           logon: false,
           id: null,
-          token: null
+          token: null,
+          currentUser: null
       }
 }

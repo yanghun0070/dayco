@@ -3,6 +3,7 @@ package com.ykgroup.dayco.uaa.auth.ui;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.net.URI;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,9 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ykgroup.dayco.uaa.auth.application.AuthenticationService;
-import com.ykgroup.dayco.uaa.auth.domain.AuthenticationRequest;
+import com.ykgroup.dayco.uaa.auth.dto.SessionUser;
 import com.ykgroup.dayco.uaa.common.presentation.vo.GlobalMessage;
 import com.ykgroup.dayco.uaa.common.presentation.vo.Result;
 
@@ -35,23 +37,23 @@ public class AuthenticationController {
     }
 
     @PostMapping("signup")
-    public Result<GlobalMessage> signUp(@RequestBody AuthenticationRequest authRequest,
+    public Result<GlobalMessage> signUp(@RequestBody SessionUser sessionUser,
                                         HttpServletResponse response) {
-        authService.signUp(authRequest, response);
+        authService.signUp(sessionUser, response);
         GlobalMessage globalMessage = new GlobalMessage(HttpStatus.OK.value(),
                                                         messageSourceAccessor.getMessage(String.valueOf(HttpStatus.OK.value())));
         Result<GlobalMessage> result = new Result<>(globalMessage);
         result.add(
-                linkTo(methodOn(AuthenticationController.class).signUp(authRequest, response)).withSelfRel());
+                linkTo(methodOn(AuthenticationController.class).signUp(sessionUser, response)).withSelfRel());
         return result;
     }
 
     @PostMapping("signin")
-    public Result<Map<String, String>> signIn(@RequestBody AuthenticationRequest authRequest,
+    public Result<Map<String, String>> signIn(@RequestBody SessionUser sessionUser,
                                               HttpSession session, HttpServletResponse response)  {
-        Result<Map<String, String>> result = new Result<>(authService.signIn(authRequest, session, response));
+        Result<Map<String, String>> result = new Result<>(authService.signIn(sessionUser, session, response));
         result.add(
-                linkTo(methodOn(AuthenticationController.class).signIn(authRequest, session, response)).withSelfRel());
+                linkTo(methodOn(AuthenticationController.class).signIn(sessionUser, session, response)).withSelfRel());
         return result;
     }
 

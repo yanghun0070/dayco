@@ -17,6 +17,8 @@ dependencies {
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '2.2.1.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '1.2.2.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '2.2.6.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.2.6.RELEASE'
 
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -41,6 +43,11 @@ dependencies {
 	testRuntime 'org.junit.jupiter:junit-jupiter-engine'
 	testRuntime 'org.junit.vintage:junit-vintage-engine'
 
+}
+repositories {
+	maven {
+		url 'https://repo.spring.io/libs-milestone'
+	}
 }
 
 test {

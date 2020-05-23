@@ -13,7 +13,7 @@ import * as types from '../constants/types';
 export function user(state = initialState.user, action) {
     switch (action.type) {
         case types.user.LOGIN_SUCCESS:
-            const { type, userId, token } = action;
+            const { username, token } = action;
             Cookies.set("token", "Bearer " + token);
             return Object.assign({}, state, {
                 authenticated: true,
@@ -31,14 +31,25 @@ export function user(state = initialState.user, action) {
                 id: action.userId
             });
         case types.user.JOIN_FAIL:
+            const { message } = action;
             return Object.assign({}, state, {
-                authenticated: true,
-                joined: false
+                authenticated: false,
+                joined: false,
+                message: message
             });
         case types.user.LOGIN_FAIL:
             return Object.assign({}, state, {
                 authenticated: true,
                 logon: false
+            });
+        case types.user.CURRENT_USER_SUCCESS:
+            const { currentUser } = action;
+            console.log("user reduce")
+            console.log(currentUser)
+            return Object.assign({}, state, {
+                authenticated: true,
+                logon: true,
+                currentUser: currentUser
             });
         default:
             return state;

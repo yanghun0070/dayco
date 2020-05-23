@@ -8,5 +8,7 @@ import com.ykgroup.dayco.uaa.user.domain.User;
 
 public interface UserJpaRepository extends JpaRepository<User, Integer> {
 
-    public Optional<User> findByUserId(String userId);
+    Optional<User> findByUserId(String userId);
+
+    Optional<User> findByEmailEmail(String email);
 }

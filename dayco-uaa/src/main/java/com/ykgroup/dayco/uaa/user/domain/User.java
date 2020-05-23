@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.ykgroup.dayco.uaa.manager.domain.UserAuthorization;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,17 +34,32 @@ import lombok.ToString;
 @ToString(exclude = "userAuthorizations")
 @Table(name = "uaa_user")
 public class User implements UserDetails {
+
     @Id
     @Column(name = "user_id")
     private String userId;
-    @Embedded
-    private Password password;
-    private Integer age;
-    private Integer gender;
+
     @Embedded
     private Email email;
+
+    @Embedded
+    private Password password;
+
+    @Column
+    private Integer age;
+
+    @Column
+    private Integer gender;
+
+    @Column
+    private String picture;
+
+    @Column
     private LocalDateTime createTime;
+
+    @Column
     private LocalDateTime modifyTime;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAuthorization> userAuthorizations = new ArrayList<>();
 
@@ -54,14 +70,31 @@ public class User implements UserDetails {
         this.modifyTime = LocalDateTime.now();
     }
 
-    public User(String userId, String password, Integer age, Integer gender,
-                String email) {
+    public User(String userId, String password, String picture) {
+        this(userId, password);
+        this.picture = picture;
+    }
+
+    public User(String userId, String password, String email, String picture) {
+        this(userId, password, picture);
+        this.email = new Email(email);
+
+    }
+
+    public User update(String userId, String picture) {
+        this.userId = userId;
+        this.picture = picture;
+        this.modifyTime = LocalDateTime.now();
+        return this;
+    }
+
+    public User update(String userId, String password, Integer age, Integer gender) {
         this.userId = userId;
         this.password = new Password(password);
         this.age = age;
         this.gender = gender;
-        this.email = new Email(email);
         this.modifyTime = LocalDateTime.now();
+        return this;
     }
 
     @Override
@@ -92,6 +125,10 @@ public class User implements UserDetails {
 
     public Optional<Email> getEmail() {
         return Optional.ofNullable(email);
+    }
+
+    public Optional<String> getPicture() {
+        return Optional.ofNullable(picture);
     }
 
     @Override

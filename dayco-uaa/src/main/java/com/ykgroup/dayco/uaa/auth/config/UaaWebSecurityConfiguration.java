@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ykgroup.dayco.uaa.auth.application.UaaUserDetailService;
 import com.ykgroup.dayco.uaa.manager.application.ManagerService;
@@ -27,11 +30,20 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JwtTokenProvider jwtTokenProvider;
     private ManagerService managerService;
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
+    private CustomOAuth2UserService customOAuth2UserService;
 
     public UaaWebSecurityConfiguration(JwtTokenProvider jwtTokenProvider,
-                                       ManagerService managerService) {
+                                       ManagerService managerService,
+                                       CustomOAuth2UserService customOAuth2UserService,
+                                       OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler,
+                                       OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.managerService = managerService;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.oAuth2AuthenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+        this.oAuth2AuthenticationFailureHandler = oAuth2AuthenticationFailureHandler;
     }
 
     @Bean
@@ -44,6 +56,11 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new UrlResourceMapFactoryBean(managerService);
     }
 
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
+
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/h2-console/**", "/resources/**");
     }
@@ -54,12 +71,13 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .httpStrictTransportSecurity().disable();
 
         http
+            .cors().and()
             .csrf().disable()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
-            .antMatchers("/auth/signin", "/auth/signup", "/manager/**").permitAll()
+            .antMatchers("/oauth2/**", "/auth/**", "/manager/**").permitAll()
             .anyRequest().authenticated()
             .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {
                 public <O extends FilterSecurityInterceptor> O postProcess(O fsi) {
@@ -72,7 +90,21 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             .and()
             .httpBasic()
             .and()
-            .apply(new JwtConfigurer(jwtTokenProvider));
+            .apply(new JwtConfigurer(jwtTokenProvider))
+            .and()
+            .oauth2Login()
+            .authorizationEndpoint()
+            .baseUri("/oauth2/authorization")
+            .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+            .and()
+            .redirectionEndpoint()
+            .baseUri("/oauth2/callback/*")
+            .and()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2AuthenticationSuccessHandler)
+                .failureHandler(oAuth2AuthenticationFailureHandler);
 
         http
             .addFilterBefore(new JwtTokenFilter(jwtTokenProvider),
@@ -104,5 +136,18 @@ public class UaaWebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
         }
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }

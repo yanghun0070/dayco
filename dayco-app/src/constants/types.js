@@ -5,4 +5,6 @@ export const user = {
     LOGIN_FAIL:  'dayco-app/login/fail',
     JOIN_FAIL:  'dayco-app/join/fail',
     LOGOUT_FAIL:  'dayco-app/logout/fail',
+    CURRENT_USER_SUCCESS: 'dayco-app/current-user/success',
+    CURRENT_USER_FAIL: 'dayco-app/current-user/fail',
 };

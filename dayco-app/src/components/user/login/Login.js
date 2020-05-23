@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import {Col, Row, Form, Button, Card} from 'react-bootstrap';
+import {Col, Row, Form, Button, Card, Image} from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert';
 import { login } from '../../../actions/user';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { withRouter } from "react-router";
+import googleLogo from '../../img/google-logo.png';
+import githubLogo from '../../img/github-logo.png';
+import naverLogo from '../../img/naver-logo.png';
+import { GOOGLE_AUTH_URL, GITHUB_AUTH_URL, NAVER_AUTH_URL } from '../../../constants';
 
 class Login extends Component {
 
@@ -23,14 +27,20 @@ class Login extends Component {
 	requestPwChange(event){
 		this.setState({requestPw: event.target.value});
 	}
-
+	
 	onLogin = () => {
-		this.props.login(this.state.requestId, this.state.requestPw);
+		this.props.login(this.state.requestId, this.state.requestPw)
+		.then(() => {
+			if(this.props.user.authenticated == true
+				&& this.props.user.logon == true) {
+					this.props.history.push('/'); 
+				}
+		  });
 	}
 
 	render(){
 		return (
-			<div>	
+			<div>
 				<Row>
 					<Col>&nbsp;</Col>
 				</Row>
@@ -60,19 +70,43 @@ class Login extends Component {
 											<Button className="loginBtn" size="sm" block onClick={this.onLogin}>Log In</Button>
 										</Col>
 									</Form.Group>
+									<Form.Group as={Row}>
+										<Col sm="2"></Col>
+										<Col sm="8">
+											<Button size="sm" block variant="outline-info" href={GOOGLE_AUTH_URL}>
+												<Image src={googleLogo} alt="Google" thumbnail width={26} height={26}/>
+												&nbsp;Log in with Google</Button>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Row}>
+										<Col sm="2"></Col>
+										<Col sm="8">
+											<Button size="sm" block variant="outline-info" href={GITHUB_AUTH_URL}>
+												<Image src={githubLogo} alt="Github" thumbnail width={26} height={26}/>
+												&nbsp;Log in with Github</Button>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Row}>
+										<Col sm="2"></Col>
+										<Col sm="8">
+											<Button size="sm" block variant="outline-info" href={NAVER_AUTH_URL}>
+												<Image src={naverLogo} alt="Naver" thumbnail width={26} height={26}/>
+												&nbsp;Log in with Naver</Button>
+										</Col>
+									</Form.Group>
 								</Form>
 								{(this.props.user.authenticated == true
 								&& this.props.user.logon == true) ?
-									<Alert color="success">
+									<Alert variant="success">
 									로그인 되었습니다.
 									</Alert>: ""
 								}
 								{(this.props.user.authenticated == true
 								&& this.props.user.logon == false) ?
-								<Alert  variant="danger">
-								ID/PW 확인하세요.
-								</Alert>
-									: ""
+									<Alert  variant="danger">
+									ID/PW 확인하세요.
+									</Alert>
+										: ""
 								}
 							</Card.Body>
 						</Card>
