@@ -119,3 +119,12 @@ export function getCurrentUser() {
             });
     };
 }
+
+/**
+ * 로그아웃 
+ */
+export function logout() {
+    return dispatch => {
+        dispatch(logoutSuccess())
+    }
+}

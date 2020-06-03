@@ -95,13 +95,6 @@ class SignUp extends Component {
 								</Alert>
 							: ""
 							}
-							{(this.props.user.authenticated == false && 
-							this.props.user.joined == false) ?
-								<Alert variant="danger">
-									ID / PW 확인하세요.
-								</Alert>
-							: ""
-							}
 						</Card.Body>
 					</Card>
 					</Col>

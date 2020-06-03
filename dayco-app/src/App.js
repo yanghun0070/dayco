@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { getCurrentUser } from './actions/user';
 import { connect } from 'react-redux';
+import Cookies from 'js-cookie';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
