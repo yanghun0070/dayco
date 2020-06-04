@@ -44,8 +44,6 @@ export function user(state = initialState.user, action) {
             });
         case types.user.CURRENT_USER_SUCCESS:
             const { currentUser } = action;
-            console.log("user reduce")
-            console.log(currentUser)
             return Object.assign({}, state, {
                 authenticated: true,
                 logon: true,

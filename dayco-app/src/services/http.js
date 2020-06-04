@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Cookie from "js-cookie";
+import Cookies from "js-cookie";
 import { API_BASE_URL } from '../constants';
 
 
@@ -25,7 +25,7 @@ export function loginUser(userId, password) {
 }
 
 export function getCurrentUser() {
-    const token = Cookie.get("token") ? Cookie.get("token") : null;
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
     return axios.get(API_BASE_URL + "/user/me", {
         headers: {
             'Content-type': 'application/json',

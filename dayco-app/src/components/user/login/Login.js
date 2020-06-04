@@ -118,7 +118,7 @@ class Login extends Component {
 	}
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
 	return {
 		user: state.user
 	};
