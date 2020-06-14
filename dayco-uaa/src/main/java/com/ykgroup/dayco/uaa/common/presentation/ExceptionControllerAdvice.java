@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.ykgroup.dayco.uaa.auth.exception.InvalidJwtAuthenticationException;
 import com.ykgroup.dayco.uaa.common.exception.DataNotFoundException;
@@ -78,6 +79,19 @@ public class ExceptionControllerAdvice {
         GlobalMessage message = new GlobalMessage();
         message.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         message.setMessage(messageSourceAccessor.getMessage(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value())));
+        return responseErrorMessage(request, message);
+    }
+
+    /**
+     * 서버가 Request-URI 와 일치하는 것을 찾지 못했을 경우
+     */
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public Object handleNoHandlerFound(
+            NoHandlerFoundException exception, HttpServletRequest request, Locale locale) {
+        System.out.println("handleNoHandlerFound");
+        GlobalMessage message = new GlobalMessage();
+        message.setStatus(HttpStatus.NOT_FOUND.value());
+        message.setMessage(messageSourceAccessor.getMessage(String.valueOf(HttpStatus.NOT_FOUND.value())));
         return responseErrorMessage(request, message);
     }
 

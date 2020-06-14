@@ -1,5 +1,8 @@
 server:
   port: 9999
+  error:
+    whitelabel:
+      enabled: false
   tomcat:
     remote-ip-header: x-forwarded-for
     protocol-header: x-forwarded-proto
@@ -12,6 +15,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  mvc:
+    throw-exception-if-no-handler-found: true
   h2:
     console:
       enabled: true
@@ -20,6 +25,8 @@ spring:
     name: dayco-uaa
   profiles:
     include: oauth
+  resources:
+    add-mappings: false
 
 app:
   auth:
