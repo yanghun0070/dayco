@@ -9,5 +9,5 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     healthcheck:
       enabled: true
-    registerWithEureka: false # Eureka 서비스에 등록하지 않음
-    fetchRegistry: true # Register 정보를 local 에 캐싱하지 않음
+    registerWithEureka: false # Eureka 서비스에 등록하지 여부
+    fetchRegistry: false # Register 정보를 local 에 캐싱할지 여부

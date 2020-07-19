@@ -10,6 +10,22 @@ zuul:
       path: /hello/**
       serviceId: dayco # Ribbon 에서 서비스를 찾는 데 사용하는 서비스 ID 를 정의
       stripPrefix: false
+    user:
+      path: /user/**
+      serviceId: dayco-uaa
+      stripPrefix: false
+    auth:
+      path: /auth/**
+      serviceId: dayco-uaa
+      stripPrefix: false
+    oauth2:
+      path: /oauth2/**
+      serviceId: dayco-uaa
+      stripPrefix: false
+    manager:
+      path: /manager/**
+      serviceId: dayco-uaa
+      stripPrefix: false
 
 ribbon:
   eureka:
@@ -18,6 +34,11 @@ ribbon:
 dayco:
   ribbon:
     listOfServers: http://localhost:8080
+    ServerListRefreshInterval: 15000
+
+dayco-uaa:
+  ribbon:
+    listOfServers: http://localhost:9999
     ServerListRefreshInterval: 15000
 
 # https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide#endpoints
