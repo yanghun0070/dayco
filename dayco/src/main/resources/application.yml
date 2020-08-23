@@ -8,8 +8,26 @@ spring:
   h2:
     console:
       enabled: true
+      path: /h2-console
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
 
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+feign:
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        loggerLevel: BASIC
+        # feign의 전역 timeout 설정 : 5초
+        connectTimeout: 5000
+        readTimeout: 5000
+  user-api.url: http://localhost:9999

@@ -5,6 +5,8 @@ import { withRouter } from "react-router";
 import { logout } from '../../actions/user';
 import login from '../img/login.png';
 import signup from '../img/signup.png';
+import photo from '../img/photo.png';
+import home from '../img/home.png';
 
 class Header extends Component {
 
@@ -17,26 +19,36 @@ class Header extends Component {
             <Navbar bg="primary" variant="dark" expand="lg">
                 <Navbar.Brand href="#home">Dayco</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
+  
                 {
                 (this.props.user.authenticated == true
                 && this.props.user.logon == true
                 && this.props.user.currentUser != null) ? 
                 <Navbar.Collapse className="justify-content-end">
-                <Navbar.Text>
-                {this.props.user.currentUser.picture ? (
-                                    <Image src={this.props.user.currentUser.picture} alt={this.props.user.currentUser.name}
-                                    width={26} height={26}
-                                    roundedCircle/>
-                                ) : (
-                                    <div className="text-avatar">
-                                        <span>{this.props.user.currentUser.name}</span>
-                                    </div>
-                                )}
-                &nbsp;<a onClick={this.onLogout}>{this.props.user.currentUser.userId}</a>
-                </Navbar.Text>
+                    <Navbar.Brand href="/home">
+                            <Image src={home} alt="home" width={30} height={30}/>
+                    </Navbar.Brand>
+                    <Navbar.Brand href="/posts/edit">
+                            <Image src={photo} alt="postsedit" width={30} height={30}/>
+                    </Navbar.Brand>
+                    <Navbar.Text>
+                    {this.props.user.currentUser.picture ? (
+                                        <Image src={this.props.user.currentUser.picture} alt={this.props.user.currentUser.name}
+                                        width={26} height={26}
+                                        roundedCircle/>
+                                    ) : (
+                                        <div className="text-avatar">
+                                            <span>{this.props.user.currentUser.name}</span>
+                                        </div>
+                                    )}
+                    &nbsp;<a onClick={this.onLogout}>{this.props.user.currentUser.userId}</a>
+                    </Navbar.Text>
                 </Navbar.Collapse> :
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar>
+                        <Navbar.Brand href="/home">
+                                <Image src={home} alt="home" width={30} height={30}/>
+                        </Navbar.Brand>
                         <Navbar.Brand href="/login">
                             <Image src={login} alt="login" roundedCircle width={30} height={30}/>
                         </Navbar.Brand>
@@ -52,8 +64,6 @@ class Header extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    console.log("mapStateToProps")
-    console.log(state)
 	return {
 		user: state.user
 	};

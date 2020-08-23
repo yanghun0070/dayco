@@ -37,6 +37,8 @@ public class ExceptionLogger {
         HttpServletRequest request =
                 ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         logger.error("========================= Exception Information Begin =============================== ");
+        String auth = request.getHeader("Authentication");
+        logger.error("Auth Header : " + auth);
         String requestUrl = request.getScheme() + "://" + request.getServerName() + ":"
                             + request.getServerPort() + request.getRequestURI();
 

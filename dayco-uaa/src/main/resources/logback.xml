@@ -8,22 +8,24 @@
         </encoder>
     </appender>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOGFILE_PATH}/logback-%d{yyyy-MM-dd}.log</file>
+        <file>${LOGFILE_PATH}/logback-dayco-uua-%d{yyyy-MM-dd}.log</file>
         <encoder>
             <pattern>[%d{yyyy-MM-dd HH:mm:ss}:%-3relative][%thread] %-5level %logger{35} - %msg%n</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>${LOGFILE_PATH}/logs/access_log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOGFILE_PATH}/logs/access_log-dayco-uua-%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 
     <logger name="com.ykgroup.dayco.uaa" level="DEBUG">
         <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </logger>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </root>
 
 </configuration>

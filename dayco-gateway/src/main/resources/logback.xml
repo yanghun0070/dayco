@@ -18,12 +18,14 @@
         </rollingPolicy>
     </appender>
 
-    <logger name="com.ykgroup.dayco.gateway" level="ERROR">
+    <logger name="com.ykgroup.dayco.gateway" level="DEBUG">
         <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </logger>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
     </root>
 
 </configuration>

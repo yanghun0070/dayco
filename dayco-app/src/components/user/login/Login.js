@@ -33,7 +33,7 @@ class Login extends Component {
 		.then(() => {
 			if(this.props.user.authenticated == true
 				&& this.props.user.logon == true) {
-					this.props.history.push('/'); 
+					this.props.history.push('/home'); 
 				}
 		  });
 	}

@@ -66,8 +66,6 @@ public class ZuulFallbackProvider implements FallbackProvider {
             public HttpHeaders getHeaders() {
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
-                headers.setAccessControlAllowCredentials(true);
-                headers.setAccessControlAllowOrigin("*");
                 return headers;
             }
         };

@@ -18,7 +18,8 @@ export function user(state = initialState.user, action) {
             return Object.assign({}, state, {
                 authenticated: true,
                 logon: true,
-                token: token
+                token: token,
+                id: username
             });
         case types.user.LOGOUT_SUCCESS:
             Cookies.remove("token");
@@ -48,6 +49,12 @@ export function user(state = initialState.user, action) {
                 authenticated: true,
                 logon: true,
                 currentUser: currentUser
+            });
+        case types.user.CURRENT_USER_FAIL:
+            return Object.assign({}, state, {
+                authenticated: false,
+                logon: false,
+                currentUser: null
             });
         default:
             return state;

@@ -8,6 +8,7 @@ import com.ykgroup.dayco.uaa.user.domain.User;
 import com.ykgroup.dayco.uaa.manager.domain.UserAuthorization;
 import com.ykgroup.dayco.uaa.user.infra.UserAuthorizationJpaRepository;
 import com.ykgroup.dayco.uaa.user.infra.UserJpaRepository;
+import com.ykgroup.dayco.uaa.user.ui.dto.UserDto;
 
 @Service
 public class UserService {

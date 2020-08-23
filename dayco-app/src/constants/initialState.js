@@ -4,11 +4,16 @@
  */
 export default {
   user: {
-          authenticated: false,
-          joined: false,
-          logon: false,
-          id: null,
-          token: null,
-          currentUser: null
-      }
+      authenticated: false,
+      joined: false,
+      logon: false,
+      id: null,
+      token: null,
+      currentUser: null
+  },
+  posts: {
+    list: [],
+    page: 0,
+    rowNum : 0
+  } 
 }

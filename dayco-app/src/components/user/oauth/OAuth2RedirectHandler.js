@@ -17,7 +17,7 @@ class OAuth2RedirectHandler extends Component {
         Cookies.set("token", "Bearer " + token);
         if(token) {
             return <Redirect to={{
-                pathname: "/",
+                pathname: "/home",
                 state: { 
                     from: this.props.location 
                 }

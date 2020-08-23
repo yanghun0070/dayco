@@ -33,3 +33,53 @@ export function getCurrentUser() {
          }
     });
 }
+
+export function createPosts(title, content) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.post(API_BASE_URL + "/posts", {
+        title: title,
+        content: content
+    }, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        }
+    });
+}
+
+export function editPosts(id, title, content) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.put(API_BASE_URL + "/posts", {
+         id: id,
+         title: title,
+         content: content
+    }, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+         }
+    });
+}
+
+export function getPosts(id) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.get(API_BASE_URL + "/posts", {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+         },
+         params: {
+             id: id
+         }
+    })
+}
+
+export function getAllPosts() {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.get(API_BASE_URL + "/posts/all", {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+         }
+    })
+}

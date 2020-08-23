@@ -1,5 +1,6 @@
 import * as types from '../constants/types';
 import * as API from '../services/http';
+import Cookies from "js-cookie";
 
 /**
  * 로그인 성공
@@ -34,8 +35,7 @@ export function logoutSuccess() {
 export function joinSuccess(userId) {
     return {
         type: types.user.JOIN_SUCCESS,
-        userId,
-
+        userId
     };
 }
 
@@ -77,7 +77,7 @@ export function currentUserFail() {
  */
 export function login(userId, password) {
     return dispatch => {
-        return  API.loginUser(userId, password)
+        return API.loginUser(userId, password)
             .then(async(response) => {
                 var result = response.data.result
                 dispatch(loginSuccess(result.username, result.token));
@@ -111,12 +111,17 @@ export function join(userId, email, password, confirmPassword) {
  */
 export function getCurrentUser() {
     return dispatch => {
-        return API.getCurrentUser()
+        const token = Cookies.get("token") ? Cookies.get("token") : null;
+        if(token == null) {
+            dispatch(currentUserFail());
+        } else {
+            return API.getCurrentUser()
             .then(async(response) => {
                 dispatch(currentUserSuccess(response.data));
             }).catch(function (error) {
                 dispatch(currentUserFail());
             });
+        }  
     };
 }
 
