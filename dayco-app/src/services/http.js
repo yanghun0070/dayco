@@ -47,18 +47,28 @@ export function createPosts(title, content) {
     });
 }
 
-export function editPosts(id, title, content) {
+export function editPosts(id, title, content, author) {
     const token = Cookies.get("token") ? Cookies.get("token") : null;
-    return axios.put(API_BASE_URL + "/posts", {
-         id: id,
+    return axios.put(API_BASE_URL + "/posts/" + id, {
          title: title,
-         content: content
+         content: content,
+         author: author
     }, {
         headers: {
             'Content-type': 'application/json',
             'Authorization': token
          }
     });
+}
+
+export function deletePosts(id) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.delete(API_BASE_URL + "/posts/" + id, {
+       headers: {
+           'Content-type': 'application/json',
+           'Authorization': token
+        }
+   });
 }
 
 export function getPosts(id) {

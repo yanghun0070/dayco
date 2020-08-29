@@ -34,9 +34,10 @@ export function createPostsSuccess(posts) {
 /**
  * 게시판 목록 수정 성공
  */
-export function editPostsSuccess() {
+export function editPostsSuccess(editPosts) {
     return {
-        type: types.posts.EDIT_SUCCESS
+        type: types.posts.EDIT_SUCCESS,
+        editPosts
     };
 }
 
@@ -105,19 +106,66 @@ export function createPosts(title, content) {
         return API.createPosts(title, content)
         .then(async(response) => {
             dispatch(createPostsSuccess(response.data));
+            dispatch(hidePostsEditModal());
         }).catch(function (error) {
             dispatch(createPostsFail());
         })
     }
 }
 
-export function editPosts(id, title, content) {
+export function editPosts(id, title, content, author) {
     return dispatch => {
-        return API.editPosts(id, title, content)
+        return API.editPosts(id, title, content, author)
         .then(async(response) => {
-            dispatch(editPostsSuccess());
+            dispatch(editPostsSuccess(response.data));
+            dispatch(hidePostsEditModal());
         }).catch(function (error) {
             dispatch(editPostsFail());
         })
     }
+}
+
+export function deletePosts(id) {
+    return dispatch => {
+        return API.deletePosts(id)
+        .then(async(response) => {
+            dispatch({
+                type: types.posts.DELETE_SUCCESS,
+                deletePostsId: id
+            });
+            dispatch(hidePostsEditModal());
+        }).catch(function (error) {
+            dispatch({
+                type: types.posts.DELETE_FAIL
+            });
+        })
+    }
+}
+
+export function showPostsCreateModal() {
+    return dispatch => {
+        dispatch({
+            type: types.postsEditModal.MODAL_CREATE
+        })
+    };
+}
+
+export function showPostsEditModal(id, title, content, author) {
+    return dispatch => {
+        dispatch({
+            type: types.postsEditModal.MODAL_EDIT,
+            id: id,
+            title: title,
+            content: content,
+            author: author
+        })
+    };
+}
+  
+export function hidePostsEditModal() {
+    return dispatch => {
+        dispatch({ 
+            type: types.postsEditModal.MODAL_HIDE 
+        })
+    };
 }

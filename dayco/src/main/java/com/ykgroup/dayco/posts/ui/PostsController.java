@@ -65,7 +65,7 @@ public class PostsController {
             throw new IllegalArgumentException("User doesn't Exist");
         }
         // 작성자와 글 수정자와 다를 경우,
-        if(requestDto.getAuthor().equals(user.getUserId())) {
+        if(!requestDto.getAuthor().equals(user.getUserId())) {
             throw new IllegalArgumentException("Different from author and post modifier");
         }
         return postsService.update(id, requestDto);

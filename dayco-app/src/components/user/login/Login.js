@@ -31,8 +31,8 @@ class Login extends Component {
 	onLogin = () => {
 		this.props.login(this.state.requestId, this.state.requestPw)
 		.then(() => {
-			if(this.props.user.authenticated == true
-				&& this.props.user.logon == true) {
+			if(this.props.user.authenticated === true
+				&& this.props.user.logon === true) {
 					this.props.history.push('/home'); 
 				}
 		  });
@@ -95,14 +95,14 @@ class Login extends Component {
 										</Col>
 									</Form.Group>
 								</Form>
-								{(this.props.user.authenticated == true
-								&& this.props.user.logon == true) ?
+								{(this.props.user.authenticated === true
+								&& this.props.user.logon === true) ?
 									<Alert variant="success">
 									로그인 되었습니다.
 									</Alert>: ""
 								}
-								{(this.props.user.authenticated == true
-								&& this.props.user.logon == false) ?
+								{(this.props.user.authenticated === true
+								&& this.props.user.logon === false) ?
 									<Alert  variant="danger">
 									ID/PW 확인하세요.
 									</Alert>

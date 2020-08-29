@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import { user } from './user';
-import { posts } from './posts';
+import { posts, postsEditModal } from './posts';
 
 /**
  * Root reducer for project
@@ -9,7 +9,8 @@ import { posts } from './posts';
  */
 const rootReducer = combineReducers({
     user,
-    posts
+    posts,
+    postsEditModal
 });
 
 export default rootReducer;

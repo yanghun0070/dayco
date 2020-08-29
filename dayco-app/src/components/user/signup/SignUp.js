@@ -81,15 +81,15 @@ class SignUp extends Component {
 									</Col>
 								</Form.Group>
 							</Form>
-							{(this.props.user.authenticated == true && 
-								this.props.user.joined == true) ?
+							{(this.props.user.authenticated === true && 
+								this.props.user.joined === true) ?
 								<Alert variant="success">
 									회원가입 되었습니다.
 								</Alert>
 								: ""
 							}
-							{(this.props.user.authenticated == true && 
-							this.props.user.joined == false) ?
+							{(this.props.user.authenticated === true && 
+							this.props.user.joined === false) ?
 								<Alert variant="success">
 									로그인 되었습니다.
 								</Alert>

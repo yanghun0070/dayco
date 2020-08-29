@@ -15,5 +15,13 @@ export default {
     list: [],
     page: 0,
     rowNum : 0
-  } 
+  },
+  postsEditModal: {
+    isShow: false,
+    id: -1,
+    title: "",
+    content: "",
+    author: "",
+    status: 'create' //create, edit, hide
+  }
 }

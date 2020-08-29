@@ -3,7 +3,7 @@ import Header from './components/common/Header';
 import Login from './components/user/login/Login';
 import SignUp from './components/user/signup/SignUp';
 import PostsList from './components/posts/PostsList';
-import PostsEdit from './components/posts/PostsEdit';
+import PostsEditModal from './components/posts/PostEditModal';
 import OAuth2RedirectHandler from './components/user/oauth/OAuth2RedirectHandler';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
@@ -14,25 +14,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     this.props.getCurrentUser();
   }
+
 
   render() {
     return (
     <Router forceRefresh={true} >
       <div>
         <Header />
+        <PostsEditModal  />
         <Container>
           <Switch>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp}/>
             <Route path="/home" component={PostsList} />
-            <Route path="/posts/edit" component={PostsEdit} />
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}/>
           </Switch>
         </Container>
@@ -44,7 +41,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		user: state.user
+    user: state.user
 	};
 }
 

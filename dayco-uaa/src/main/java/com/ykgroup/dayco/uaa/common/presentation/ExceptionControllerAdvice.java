@@ -110,7 +110,7 @@ public class ExceptionControllerAdvice {
     /**
      * Validation 에러 일 경우
      */
-    @ExceptionHandler({ BindException.class, MethodArgumentNotValidException.class, IllegalArgumentException.class })
+    @ExceptionHandler({ BindException.class, MethodArgumentNotValidException.class, IllegalArgumentException.class, IllegalStateException.class})
     public Object validatorExceptionHandler(Exception exception, HttpServletRequest request, Locale locale) {
         GlobalMessage message = new GlobalMessage();
         message.setStatus(HttpStatus.BAD_REQUEST.value());

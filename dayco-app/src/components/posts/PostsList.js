@@ -1,31 +1,22 @@
 import React, { Component } from 'react';
-import { Col, Row, Form, Button, Card, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import question from '../img/the-question-mark.png';
 import Posts from './Posts';
-import { getAllPosts, createPosts } from '../../actions/posts';
+import { getAllPosts } from '../../actions/posts';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 
 class PostsList extends Component {
 
-    constructor() {
-        super(...arguments);
-    }
-
     /**
-     * Reactjs Component Guide 문서
-     * https://ko.reactjs.org/docs/react-component.html
+     * posts 추가 및 변경될 때, 호출
+     * @see https://ko.reactjs.org/docs/react-component.html
      */
     componentDidMount() {
         this.props.getAllPosts();
     }
 
-    componentWillReceiveProps(nextProps) {
-        
-    }
-
     render(){
-  
         let postsInfosHtml = this.props.posts.list.map((info) => {
             return <Posts 
                 key={info.id}
@@ -54,8 +45,8 @@ class PostsList extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		posts: state.posts
+        posts: state.posts
 	};
 }
 
-export default withRouter(connect(mapStateToProps, {getAllPosts, createPosts})(PostsList));
+export default withRouter(connect(mapStateToProps, {getAllPosts})(PostsList));

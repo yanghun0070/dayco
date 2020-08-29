@@ -14,7 +14,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>${LOGFILE_PATH}/logs/access_log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${LOGFILE_PATH}/logs/access_gateway_log-%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 
