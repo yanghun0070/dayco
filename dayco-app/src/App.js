@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Header from './components/common/Header';
+import Alerts from './components/common/Alerts';
 import Login from './components/user/login/Login';
 import SignUp from './components/user/signup/SignUp';
 import PostsList from './components/posts/PostsList';
@@ -18,12 +19,12 @@ class App extends Component {
     this.props.getCurrentUser();
   }
 
-
   render() {
     return (
     <Router forceRefresh={true} >
       <div>
         <Header />
+        <Alerts />
         <PostsEditModal  />
         <Container>
           <Switch>

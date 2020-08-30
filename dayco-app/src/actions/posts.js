@@ -1,5 +1,6 @@
 import * as types from '../constants/types';
 import * as API from '../services/http';
+import * as Alert from '../actions/alert';
 
 /**
  * 게시판 목록 전체 조회 성공
@@ -106,8 +107,16 @@ export function createPosts(title, content) {
         return API.createPosts(title, content)
         .then(async(response) => {
             dispatch(createPostsSuccess(response.data));
+            dispatch(Alert.createAlert({
+                variant : 'success', 
+                message : '게시글 생성 성공하였습니다.'
+            }));
             dispatch(hidePostsEditModal());
         }).catch(function (error) {
+            dispatch(Alert.createAlert({
+                variant : 'danger', 
+                message : '게시글 생성 실패하였습니다.'
+            }));
             dispatch(createPostsFail());
         })
     }
@@ -118,9 +127,17 @@ export function editPosts(id, title, content, author) {
         return API.editPosts(id, title, content, author)
         .then(async(response) => {
             dispatch(editPostsSuccess(response.data));
+            dispatch(Alert.createAlert({
+                variant : 'success', 
+                message : '게시글 수정 성공하였습니다.'
+            }));
             dispatch(hidePostsEditModal());
         }).catch(function (error) {
             dispatch(editPostsFail());
+            dispatch(Alert.createAlert({
+                variant : 'danger', 
+                message : '게시글 수정 실패하였습니다.'
+            }));
         })
     }
 }
@@ -134,10 +151,18 @@ export function deletePosts(id) {
                 deletePostsId: id
             });
             dispatch(hidePostsEditModal());
+            dispatch(Alert.createAlert({
+                variant : 'success', 
+                message : '게시글 삭제 성공하였습니다.'
+            }));
         }).catch(function (error) {
             dispatch({
                 type: types.posts.DELETE_FAIL
             });
+            dispatch(Alert.createAlert({
+                variant : 'danger', 
+                message : '게시글 삭제 실패하였습니다.'
+            }));
         })
     }
 }

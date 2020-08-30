@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { createPosts, editPosts, hidePostsEditModal } from '../../actions/posts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSmile, faSmileBeam, faSmileWink, faSmog, faSmoking, faSmokingBan, faSms } from '@fortawesome/free-solid-svg-icons'
+import { faSmileBeam, faSms } from '@fortawesome/free-solid-svg-icons'
 
 class PostsEditModal extends Component {
 

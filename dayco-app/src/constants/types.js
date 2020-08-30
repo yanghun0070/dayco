@@ -27,3 +27,8 @@ export const postsEditModal = {
     MODAL_EDIT: 'dayco-app/posts-modal/edit',
     MODAL_HIDE: 'dayco-app/posts-modal/hide'
 }
+
+export const alert = {
+    ALERT_CREATE : 'dayco-app/alert/create',
+    ALERT_REMOVE : 'dayco-app/alert/remove' 
+}

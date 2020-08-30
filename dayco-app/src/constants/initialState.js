@@ -23,5 +23,8 @@ export default {
     content: "",
     author: "",
     status: 'create' //create, edit, hide
+  },
+  alerts: {
+    list: [], 
   }
 }

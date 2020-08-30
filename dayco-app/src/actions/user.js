@@ -1,5 +1,6 @@
 import * as types from '../constants/types';
 import * as API from '../services/http';
+import * as Alert from '../actions/alert';
 import Cookies from "js-cookie";
 
 /**
@@ -81,8 +82,16 @@ export function login(userId, password) {
             .then(async(response) => {
                 var result = response.data.result
                 dispatch(loginSuccess(result.username, result.token));
+                dispatch(Alert.createAlert({
+                    variant : 'success', 
+                    message : '로그인 되셨습니다.'
+                }));
             }).catch(function (error) {
                 dispatch(loginFail());
+                dispatch(Alert.createAlert({
+                    variant : 'danger', 
+                    message : '로그인 실패하였습니다.'
+                }));
             })
     };
 }
@@ -100,8 +109,16 @@ export function join(userId, email, password, confirmPassword) {
         return API.joinUser(userId, email, password, confirmPassword)
             .then(async(response) => {
                 dispatch(joinSuccess(userId));
+                dispatch(Alert.createAlert({
+                    variant : 'success', 
+                    message : '회원가입 되셨습니다.'
+                }));
             }).catch(function (error) {
                 dispatch(joinFail(error.message));
+                dispatch(Alert.createAlert({
+                    variant : 'danger', 
+                    message : '회원가입 실패하였습니다.'
+                }));
             })
     };
 }
