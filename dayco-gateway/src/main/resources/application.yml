@@ -1,50 +1,36 @@
 server:
   port: 8000
 
-# https://cloud.spring.io/spring-cloud-netflix/multi/multi__router_and_filter_zuul.html
-zuul:
-  ignoredServices: '*'
-  prefix: /api
-  sensitiveHeaders: Cookie,Set-Cookie # Pass Authorization header downstream
-  routes:
-    hello:
-      path: /hello/**
-      serviceId: dayco # Ribbon 에서 서비스를 찾는 데 사용하는 서비스 ID 를 정의
-      stripPrefix: false
-    posts:
-      path: /posts/**
-      serviceId: dayco
-      stripPrefix: false
-    user:
-      path: /user/**
-      serviceId: dayco-uaa
-      stripPrefix: false
-    auth:
-      path: /auth/**
-      serviceId: dayco-uaa
-      stripPrefix: false
-    oauth2:
-      path: /oauth2/**
-      serviceId: dayco-uaa
-      stripPrefix: false
-    manager:
-      path: /manager/**
-      serviceId: dayco-uaa
-      stripPrefix: false
-
-ribbon:
-  eureka:
-    enabled: false # Ribbon 에서 Eureka 지원을 끔. 유레카로부터 서버 목록을 가져오고 싶지 않으면 False
-
-dayco:
-  ribbon:
-    listOfServers: http://localhost:8080
-    ServerListRefreshInterval: 15000
-
-dayco-uaa:
-  ribbon:
-    listOfServers: http://localhost:9999
-    ServerListRefreshInterval: 15000
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allow-credentials: true
+            allowedHeaders: "*"
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - OPTION
+              - DELETE
+      routes:
+        - id: dayco
+          uri: http://localhost:8080
+          predicates:
+            - Path=/api/posts/**,/api/dayco-websocket/**
+          filters:
+            - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+        - id: dayco-uaa
+          uri: http://localhost:9999
+          predicates:
+            - Path=/api/user/**,/api/auth/**,/api/oauth2/**,/api/manager/**
+          filters:
+            - StripPrefix=1
+            - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
 
 # https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide#endpoints
 management:
