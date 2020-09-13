@@ -26,5 +26,6 @@ export default {
   },
   alerts: {
     list: [], 
-  }
+  },
+  socket: true
 }

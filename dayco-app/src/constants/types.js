@@ -25,6 +25,7 @@ export const posts = {
 export const postsEditModal = {
     MODAL_CREATE: 'dayco-app/posts-modal/create',
     MODAL_EDIT: 'dayco-app/posts-modal/edit',
+    MODAL_DELETE: 'dayco-app/posts-modal/delete',
     MODAL_HIDE: 'dayco-app/posts-modal/hide'
 }
 

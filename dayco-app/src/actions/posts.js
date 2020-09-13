@@ -102,22 +102,78 @@ export function getPosts(id) {
     }
 }
 
+export function dispatchCreatePostsSuccess(data) {
+    return dispatch => {
+        dispatch(Alert.createAlert({
+            variant : 'success', 
+            message : data.author + ' 게시글 생성 성공하였습니다.'
+        }));
+        dispatch(createPostsSuccess(data));
+        dispatch(hidePostsEditModal());
+    }
+}
+
+export function dispatchCreatePostsFail() {
+    return dispatch => {
+        dispatch(createPostsFail());
+    }
+}
+
+export function dispatchEditPostsSuccess(data) {
+    return dispatch => {
+        dispatch(editPostsSuccess(data));
+        dispatch(Alert.createAlert({
+            variant : 'success', 
+            message : data.author + ' 게시글 수정 성공하였습니다.'
+        }));
+        dispatch(hidePostsEditModal());
+    }
+}
+
+export function dispatchEditPostsFail() {
+    return dispatch => {
+        dispatch(editPostsFail());
+    }
+}
+
+export function dispatchDeletePostsSuccess(id, author) {
+    return dispatch => {
+        dispatch({
+            type: types.posts.DELETE_SUCCESS,
+            deletePostsId: id
+        });
+        dispatch(hidePostsEditModal());
+    }
+}
+
+export function dispatchDeletePostsFail() {
+    return dispatch => {
+        dispatch({
+            type: types.posts.DELETE_FAIL
+        });
+        dispatch(Alert.createAlert({
+            variant : 'danger', 
+            message : '게시글 삭제 실패하였습니다.'
+        }));
+    }
+}
+
 export function createPosts(title, content) {
     return dispatch => {
         return API.createPosts(title, content)
         .then(async(response) => {
-            dispatch(createPostsSuccess(response.data));
             dispatch(Alert.createAlert({
                 variant : 'success', 
-                message : '게시글 생성 성공하였습니다.'
+                message : response.data.author + ' 게시글 생성 성공하였습니다.'
             }));
+            dispatch(createPostsSuccess(response.data));
             dispatch(hidePostsEditModal());
         }).catch(function (error) {
             dispatch(Alert.createAlert({
                 variant : 'danger', 
                 message : '게시글 생성 실패하였습니다.'
             }));
-            dispatch(createPostsFail());
+            dispatchCreatePostsFail();
         })
     }
 }
@@ -125,44 +181,38 @@ export function createPosts(title, content) {
 export function editPosts(id, title, content, author) {
     return dispatch => {
         return API.editPosts(id, title, content, author)
-        .then(async(response) => {
-            dispatch(editPostsSuccess(response.data));
+            .then(async(response) => {
+                dispatch(editPostsSuccess(response.data));
             dispatch(Alert.createAlert({
                 variant : 'success', 
-                message : '게시글 수정 성공하였습니다.'
+                message : response.data.author + ' 게시글 수정 성공하였습니다.'
             }));
             dispatch(hidePostsEditModal());
         }).catch(function (error) {
-            dispatch(editPostsFail());
             dispatch(Alert.createAlert({
                 variant : 'danger', 
                 message : '게시글 수정 실패하였습니다.'
             }));
+            dispatchEditPostsFail();
         })
     }
 }
 
-export function deletePosts(id) {
+export function deletePosts(id, author) {
     return dispatch => {
         return API.deletePosts(id)
         .then(async(response) => {
+            dispatch(Alert.createAlert({
+                variant : 'success', 
+                message : '게시글 삭제 성공하였습니다.'
+            }));
             dispatch({
                 type: types.posts.DELETE_SUCCESS,
                 deletePostsId: id
             });
             dispatch(hidePostsEditModal());
-            dispatch(Alert.createAlert({
-                variant : 'success', 
-                message : '게시글 삭제 성공하였습니다.'
-            }));
         }).catch(function (error) {
-            dispatch({
-                type: types.posts.DELETE_FAIL
-            });
-            dispatch(Alert.createAlert({
-                variant : 'danger', 
-                message : '게시글 삭제 실패하였습니다.'
-            }));
+            dispatchDeletePostsFail();
         })
     }
 }
@@ -182,6 +232,17 @@ export function showPostsEditModal(id, title, content, author) {
             id: id,
             title: title,
             content: content,
+            author: author
+        })
+    };
+}
+
+export function showPostsDeleteModal(id, title, author) {
+    return dispatch => {
+        dispatch({
+            type: types.postsEditModal.MODAL_DELETE,
+            id: id,
+            title: title,
             author: author
         })
     };

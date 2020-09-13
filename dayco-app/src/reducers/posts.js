@@ -74,6 +74,13 @@ export function postsEditModal(state = initialState.postsEditModal, action) {
             content: action.content,
             author: action.author
         });
+      case types.postsEditModal.MODAL_DELETE:
+        return Object.assign({}, state, {
+            isShow: true, 
+            status: 'delete',
+            id: action.id,
+            author: action.author
+        }); 
       case types.postsEditModal.MODAL_HIDE:
         return Object.assign({}, state, { isShow: false, status: 'hide'});
         default:
