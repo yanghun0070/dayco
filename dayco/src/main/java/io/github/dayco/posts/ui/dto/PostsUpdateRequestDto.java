@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PostsUpdateRequestDto {
+    private Long id;
     private String title;
     private String content;
     private String author;

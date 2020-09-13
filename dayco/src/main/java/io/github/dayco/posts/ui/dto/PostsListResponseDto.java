@@ -22,4 +22,8 @@ public class PostsListResponseDto {
         this.author = posts.getAuthor();
         this.modifiedDate = posts.getModifiedDate();
     }
+
+    public String getModifiedDate() {
+        return modifiedDate.toString();
+    }
 }

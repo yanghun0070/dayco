@@ -21,6 +21,7 @@ dependencies {
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '2.2.1.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '1.2.2.RELEASE'
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.4.RELEASE'
+	compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.3.3.RELEASE'
 
 	compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '2.0.0.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter'
@@ -31,6 +32,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.1'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
