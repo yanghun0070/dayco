@@ -9,23 +9,60 @@ import OAuth2RedirectHandler from './components/user/oauth/OAuth2RedirectHandler
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { getCurrentUser } from './actions/user';
+import {  dispatchCreatePostsSuccess, dispatchCreatePostsFail, 
+  dispatchEditPostsSuccess, dispatchEditPostsFail,
+  dispatchDeletePostsSuccess } from './actions/posts';
+import { API_BASE_URL } from './constants';
+import SockJsClient from 'react-stomp';
+import Cookies from "js-cookie";
 import { connect } from 'react-redux';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class App extends Component {
 
+  constructor() {
+    super();
+    this.clientRef = React.createRef()
+  }
+
   componentDidMount() {
     this.props.getCurrentUser();
   }
 
   render() {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    const customHeaders = {
+        "Authorization": token
+    };
+
     return (
     <Router forceRefresh={true} >
       <div>
+        <SockJsClient 
+          ref={(el) => this.clientRef = el}
+          url= {API_BASE_URL + "/dayco-websocket"}
+          topics = {["/topic/posts"]}
+          headers= {customHeaders}        
+          subscribeHeaders={customHeaders}      
+          //message 보냈을 때의 callback
+          onMessage={(msg) => {
+            console.log(msg)
+            if(this.props.status === 'create') {
+                this.props.dispatchCreatePostsSuccess(msg);
+            } else if(this.props.status === 'edit') {
+                this.props.dispatchEditPostsSuccess(msg);
+            } else {
+                this.props.dispatchDeletePostsSuccess(msg.id, msg.author);
+            }
+          }}
+          onConnectFailure={(error)=> console.log("Connect Fail : " + error)}
+          onConnect={() => console.log("Connected to websocket")}
+          onDisconnect={() => console.log("Disconnected from websocket")}
+        /> 
         <Header />
         <Alerts />
-        <PostsEditModal  />
+        <PostsEditModal clientRef={this.clientRef} />
         <Container>
           <Switch>
             <Route path="/login" component={Login} />
@@ -42,9 +79,10 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-    user: state.user
+    user: state.user,
+    status: state.postsEditModal.status,
 	};
 }
-
-
-export default connect(mapStateToProps, {getCurrentUser})(App);
+export default connect(mapStateToProps, {getCurrentUser,
+  dispatchCreatePostsSuccess, dispatchEditPostsSuccess, dispatchDeletePostsSuccess
+})(App);

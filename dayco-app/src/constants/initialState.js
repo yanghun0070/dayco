@@ -27,5 +27,7 @@ export default {
   alerts: {
     list: [], 
   },
-  socket: true
+  socket: {
+    isSocket: true
+  }
 }
