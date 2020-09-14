@@ -2,14 +2,9 @@ import React, { Component } from 'react';
 import { Form, Button,  Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
-import { createPosts, editPosts, deletePosts, hidePostsEditModal,
-     dispatchCreatePostsSuccess, dispatchCreatePostsFail,
-     dispatchEditPostsSuccess, dispatchEditPostsFail,
-     dispatchDeletePostsSuccess } from '../../actions/posts';
+import { createPosts, editPosts, deletePosts, hidePostsEditModal } from '../../actions/posts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSmileBeam, faSms } from '@fortawesome/free-solid-svg-icons'
-import { API_BASE_URL } from '../../constants';
-import SockJsClient from 'react-stomp';
 import Cookies from "js-cookie";
 
 class PostsEditModal extends Component {
@@ -21,7 +16,6 @@ class PostsEditModal extends Component {
             requestTitle: '',
             requestContent: ''
         }
-        this.clientRef = React.createRef()
         this.requestTitleChange = this.requestTitleChange.bind(this);
 		this.requestContentChange = this.requestContentChange.bind(this);
     }
@@ -53,8 +47,6 @@ class PostsEditModal extends Component {
 
     editPosts = () => {
         if(this.props.isSocket === true) {
-            this.props.editPosts(this.props.id, this.state.requestTitle, this.state.requestContent, this.props.author)
-        } else {
             let jsonStr = JSON.stringify({
                 type: "edit", 
                 postsId: this.props.id,
@@ -62,18 +54,20 @@ class PostsEditModal extends Component {
                 content: this.state.requestContent
             })
             this.sendMessage("/app/dayco-websocket", jsonStr);        
+        } else {
+            this.props.editPosts(this.props.id, this.state.requestTitle, this.state.requestContent, this.props.author)
         }
     }
 
     deletePosts = () => {
         if(this.props.isSocket === true) {
-            this.props.deletePosts(this.props.id, this.props.author);
-        } else {
             let jsonStr = JSON.stringify({
                 type: "delete", 
                 postsId: this.props.id
             })
             this.sendMessage("/app/dayco-websocket", jsonStr);   
+        } else {
+            this.props.deletePosts(this.props.id, this.props.author);
         }
     }
 
@@ -82,39 +76,14 @@ class PostsEditModal extends Component {
         const customHeaders = {
             "Authorization": token
         };
-        this.clientRef.sendMessage(topic,
+        this.props.clientRef.sendMessage(topic,
             jsonStr,
             customHeaders)
     }
 
     render(){
-        const token = Cookies.get("token") ? Cookies.get("token") : null;
-        const customHeaders = {
-            "Authorization": token
-        };
         return(
             <div>
-                <SockJsClient 
-                    ref={(el) => this.clientRef = el}
-                    url= {API_BASE_URL + "/dayco-websocket"}
-                    topics = {["/topic/posts"]}
-                    headers= {customHeaders}        
-                    subscribeHeaders={customHeaders}      
-                    //message 보냈을 때의 callback
-                    onMessage={(msg) => {
-                        console.log(msg)
-                        if(this.props.status === 'create') {
-                            this.props.dispatchCreatePostsSuccess(msg);
-                        } else if(this.props.status === 'edit') {
-                            this.props.dispatchEditPostsSuccess(msg);
-                        } else {
-                            this.props.dispatchDeletePostsSuccess(msg.id, msg.author);
-                        }
-                    }}
-                    onConnectFailure={(error)=> console.log("Connect Fail : " + error)}
-                    onConnect={() => console.log("Connected to websocket")}
-                    onDisconnect={() => console.log("Disconnected from websocket")}
-                /> 
                 <Modal show={this.props.isShowPostsEditModal}>
                     <Form>
                         <Form.Group>
@@ -185,10 +154,9 @@ const mapStateToProps = (state) => {
         title : state.postsEditModal.title,
         content: state.postsEditModal.content,
         author: state.postsEditModal.author,
-        isSocket: state.isSocket
+        isSocket: state.socket.isSocket
 	};
 }
 
 export default withRouter(connect(mapStateToProps, {createPosts, editPosts, deletePosts,
-    hidePostsEditModal,
-    dispatchCreatePostsSuccess, dispatchEditPostsSuccess, dispatchDeletePostsSuccess})(PostsEditModal));
+    hidePostsEditModal})(PostsEditModal));
