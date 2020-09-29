@@ -12,6 +12,7 @@ import { getCurrentUser } from './actions/user';
 import {  dispatchCreatePostsSuccess, dispatchCreatePostsFail, 
   dispatchEditPostsSuccess, dispatchEditPostsFail,
   dispatchDeletePostsSuccess } from './actions/posts';
+import { dispatchPostsIncreaseLikeSuccess } from './actions/postsLike';
 import { API_BASE_URL } from './constants';
 import SockJsClient from 'react-stomp';
 import Cookies from "js-cookie";
@@ -42,18 +43,19 @@ class App extends Component {
         <SockJsClient 
           ref={(el) => this.clientRef = el}
           url= {API_BASE_URL + "/dayco-websocket"}
-          topics = {["/topic/posts"]}
+          topics = {["/topic/posts", "/topic/posts/like"]}
           headers= {customHeaders}        
           subscribeHeaders={customHeaders}      
           //message 보냈을 때의 callback
           onMessage={(msg) => {
-            console.log(msg)
-            if(this.props.status === 'create') {
+            if(this.props.socketActionStatus === 'postsCreate') {
                 this.props.dispatchCreatePostsSuccess(msg);
-            } else if(this.props.status === 'edit') {
+            } else if(this.props.socketActionStatus === 'postsEdit') {
                 this.props.dispatchEditPostsSuccess(msg);
-            } else {
+            } else if(this.props.socketActionStatus === 'postsDelete') {
                 this.props.dispatchDeletePostsSuccess(msg.id, msg.author);
+            } else if(this.props.socketActionStatus == 'postsLikeIncrease') {
+              this.props.dispatchPostsIncreaseLikeSuccess(msg.id, msg.likeCount)
             }
           }}
           onConnectFailure={(error)=> console.log("Connect Fail : " + error)}
@@ -67,7 +69,7 @@ class App extends Component {
           <Switch>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp}/>
-            <Route path="/home" component={PostsList} />
+            <Route path="/home" component={() => <PostsList clientRef={this.clientRef}/>} />
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}/>
           </Switch>
         </Container>
@@ -80,9 +82,10 @@ class App extends Component {
 const mapStateToProps = (state) => {
 	return {
     user: state.user,
-    status: state.postsEditModal.status,
+    socketActionStatus: state.socket.actionStatus,
 	};
 }
 export default connect(mapStateToProps, {getCurrentUser,
-  dispatchCreatePostsSuccess, dispatchEditPostsSuccess, dispatchDeletePostsSuccess
+  dispatchCreatePostsSuccess, dispatchEditPostsSuccess, dispatchDeletePostsSuccess,
+  dispatchPostsIncreaseLikeSuccess
 })(App);

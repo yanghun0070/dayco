@@ -16,6 +16,10 @@ export default {
     page: 0,
     rowNum : 0
   },
+  postsEtc: { //posts comment, like 처리
+    likes: [],
+    comment: []
+  },
   postsEditModal: {
     isShow: false,
     id: -1,
@@ -28,6 +32,7 @@ export default {
     list: [], 
   },
   socket: {
-    isSocket: true
+    isSocket: true,
+    actionStatus: ""
   }
 }

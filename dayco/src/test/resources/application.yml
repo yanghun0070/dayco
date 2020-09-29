@@ -1,0 +1,10 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  profiles:
+    active: dev
+
+
+feign:
+  user-api.url: http://localhost:9999

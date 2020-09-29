@@ -33,3 +33,21 @@ export const alert = {
     ALERT_CREATE : 'dayco-app/alert/create',
     ALERT_REMOVE : 'dayco-app/alert/remove' 
 }
+
+export const postsLikeCount = {
+    GET_SUCCESS: 'dayco-app/posts/like/get/success',
+    INCREASE_SUCCESS : 'dayco-app/posts/like/increase/success',
+    DECREASE_SUCCESS : 'dayco-app/posts/like/decrease/success',
+    GET_FAIL: 'dayco-app/posts/like/get/fail',
+    INCREASE_FAIL : 'dayco-app/posts/like/increase/fail',
+    DECREASE_FAIL : 'dayco-app/posts/like/decrease/fail'
+}
+
+export const actionStatus = {
+    SOCKET_POST_CREATE : 'dayco-app/socket/posts/create',
+    SOCKET_POST_EDIT : 'dayco-app/socket/posts/edit',
+    SOCKET_POST_DELETE : 'dayco-app/socket/posts/delete',
+    SOCKET_POST_LIKE_GET :'dayco-app/socket/posts/like/get',
+    SOCKET_POST_LIKE_INCREASE :'dayco-app/socket/posts/like/increase',
+    SOCKET_POST_LIKE_DECREASE :'dayco-app/socket/posts/like/decrease'
+}

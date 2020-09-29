@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.github.dayco.posts.domain.Posts;
 import io.github.dayco.posts.infra.PostsJpaRepository;
+import io.github.dayco.posts.infra.PostsRedisRepository;
+import io.github.dayco.posts.ui.dto.PostsLikeDto;
 import io.github.dayco.posts.ui.dto.PostsListResponseDto;
 import io.github.dayco.posts.ui.dto.PostsResponseDto;
 import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
@@ -20,6 +22,8 @@ import lombok.RequiredArgsConstructor;
 public class PostsService {
 
     private final PostsJpaRepository postsJpaRepository;
+
+    private final PostsRedisRepository postsRedisRepository;
 
     @Transactional
     public Posts save(PostsSaveRequestDto requestDto) {
@@ -57,5 +61,19 @@ public class PostsService {
         return postsJpaRepository.findAllDesc().stream()
                 .map(PostsListResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public PostsLikeDto increaseLike(Long id, String userId) {
+        return new PostsLikeDto(id, userId,
+                                postsRedisRepository.increaseLikeCount(id, userId));
+    }
+
+    public PostsLikeDto decreaseLike(Long id, String userId) {
+        return new PostsLikeDto(id, userId,
+                                postsRedisRepository.decreaseLikeCount(id, userId));
+    }
+
+    public PostsLikeDto getLikes(Long id) {
+        return new PostsLikeDto(id, postsRedisRepository.getLikeCount(id));
     }
 }

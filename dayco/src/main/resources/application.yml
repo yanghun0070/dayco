@@ -5,6 +5,8 @@ spring:
   application:
     name: ${rootProject.name}
     version: ${version}
+  profiles:
+    active: dev #dev, real
   h2:
     console:
       enabled: true
