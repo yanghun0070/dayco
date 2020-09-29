@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active:
+  redis:
+    host:
+    port: 6379

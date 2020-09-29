@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Form, Button,  Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
-import { createPosts, editPosts, deletePosts, hidePostsEditModal } from '../../actions/posts';
+import { createPosts, editPosts, deletePosts, 
+    dispatchBeforeCreatePosts, dispatchBeforeEditPosts, dispatchBeforeDelPosts,
+    hidePostsEditModal } from '../../actions/posts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSmileBeam, faSms } from '@fortawesome/free-solid-svg-icons'
 import Cookies from "js-cookie";
@@ -17,7 +19,7 @@ class PostsEditModal extends Component {
             requestContent: ''
         }
         this.requestTitleChange = this.requestTitleChange.bind(this);
-		this.requestContentChange = this.requestContentChange.bind(this);
+		    this.requestContentChange = this.requestContentChange.bind(this);
     }
 
     hideModal() {
@@ -34,12 +36,13 @@ class PostsEditModal extends Component {
 
     createPosts = () => {
         if(this.props.isSocket === true) {
+            this.props.dispatchBeforeCreatePosts();
             let jsonStr = JSON.stringify({
                 type: "create", 
                 title: this.state.requestTitle, 
                 content: this.state.requestContent
             })
-            this.sendMessage("/app/dayco-websocket", jsonStr);   
+            this.sendMessage("/app/posts", jsonStr);
         } else {
             this.props.createPosts(this.state.requestTitle, this.state.requestContent);
         }
@@ -47,13 +50,14 @@ class PostsEditModal extends Component {
 
     editPosts = () => {
         if(this.props.isSocket === true) {
+            this.props.dispatchBeforeEditPosts();
             let jsonStr = JSON.stringify({
                 type: "edit", 
                 postsId: this.props.id,
                 title: this.state.requestTitle, 
                 content: this.state.requestContent
             })
-            this.sendMessage("/app/dayco-websocket", jsonStr);        
+            this.sendMessage("/app/posts", jsonStr);
         } else {
             this.props.editPosts(this.props.id, this.state.requestTitle, this.state.requestContent, this.props.author)
         }
@@ -61,11 +65,12 @@ class PostsEditModal extends Component {
 
     deletePosts = () => {
         if(this.props.isSocket === true) {
+            this.props.dispatchBeforeDelPosts();
             let jsonStr = JSON.stringify({
                 type: "delete", 
                 postsId: this.props.id
             })
-            this.sendMessage("/app/dayco-websocket", jsonStr);   
+            this.sendMessage("/app/posts", jsonStr);
         } else {
             this.props.deletePosts(this.props.id, this.props.author);
         }
@@ -159,4 +164,5 @@ const mapStateToProps = (state) => {
 }
 
 export default withRouter(connect(mapStateToProps, {createPosts, editPosts, deletePosts,
+    dispatchBeforeCreatePosts, dispatchBeforeEditPosts, dispatchBeforeDelPosts,
     hidePostsEditModal})(PostsEditModal));

@@ -15,6 +15,8 @@ import io.github.dayco.external.ui.UserClient;
 import io.github.dayco.external.ui.vo.User;
 import io.github.dayco.posts.application.PostsService;
 import io.github.dayco.posts.domain.Posts;
+import io.github.dayco.posts.ui.dto.PostsLikeDto;
+import io.github.dayco.posts.ui.dto.PostsLikeMessage;
 import io.github.dayco.posts.ui.dto.PostsMessage;
 import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
 import io.github.dayco.posts.ui.dto.PostsUpdateRequestDto;
@@ -36,8 +38,7 @@ public class PostsSocketController {
         this.messageSourceAccessor = messageSourceAccessor;
     }
 
-
-    @MessageMapping("/dayco-websocket")
+    @MessageMapping("/posts")
     @SendTo("/topic/posts")
     public Posts message(PostsMessage postsMessage,
                          @Header("Authorization") String authorizationHeader) {
@@ -73,5 +74,36 @@ public class PostsSocketController {
                 break;
         }
         return posts;
+    }
+
+
+    @MessageMapping("/posts/like")
+    @SendTo("/topic/posts/like")
+    public PostsLikeDto increaseLikeMessage(PostsLikeMessage postsLikeMessage,
+                                            @Header("Authorization") String authorizationHeader) {
+        User user = userClient.getCurrentUser(authorizationHeader);
+        if(user == null) {
+            throw new IllegalArgumentException("User doesn't Exist");
+        }
+
+        if(postsLikeMessage == null) {
+            throw new IllegalArgumentException("PostsLikeMessage doesn't Exist");
+        }
+        System.out.println("increaseLikeMessage Posts ID:: " + postsLikeMessage.getPostsId());
+        PostsLikeDto postsLikeDto = null;
+        switch (postsLikeMessage.getType()) {
+            case "increase":
+                postsLikeDto = postsService.increaseLike(postsLikeMessage.getPostsId(),
+                                                         user.getUserId());
+                break;
+            case "decrease":
+                postsLikeDto = postsService.decreaseLike(postsLikeMessage.getPostsId(),
+                                                         user.getUserId());
+                break;
+            default:
+                postsLikeDto = postsService.getLikes(postsLikeMessage.getPostsId());
+                break;
+        }
+        return postsLikeDto;
     }
 }

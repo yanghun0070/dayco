@@ -255,3 +255,27 @@ export function hidePostsEditModal() {
         })
     };
 }
+
+export function dispatchBeforeCreatePosts() {
+    return dispatch => {
+        dispatch({
+            type: types.actionStatus.SOCKET_POST_CREATE
+        })
+    };
+}
+
+export function dispatchBeforeEditPosts() {
+    return dispatch => {
+        dispatch({
+            type: types.actionStatus.SOCKET_POST_EDIT
+        })
+    };
+}
+
+export function dispatchBeforeDelPosts() {
+    return dispatch => {
+        dispatch({
+            type: types.actionStatus.SOCKET_POST_DELETE
+        })
+    };
+}

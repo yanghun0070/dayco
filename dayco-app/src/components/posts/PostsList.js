@@ -26,7 +26,8 @@ class PostsList extends Component {
                 author={info.author}
                 content={info.content}
                 modifiedDate={info.modifiedDate}
-                />;
+                clientRef={this.props.clientRef}
+            />;
         })
 
         return (

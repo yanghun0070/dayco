@@ -93,3 +93,24 @@ export function getAllPosts() {
          }
     })
 }
+
+export function getPostsLikeCount(postsId) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.get(API_BASE_URL + "/posts/likes/" + postsId, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        }
+    });
+}
+
+export function increaseLikeCount(postsId) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.post(API_BASE_URL + "/posts/like/increase/" + postsId, null,
+    {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        }
+    });
+}

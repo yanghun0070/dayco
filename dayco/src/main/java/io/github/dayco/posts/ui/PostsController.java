@@ -24,6 +24,7 @@ import io.github.dayco.external.ui.UserClient;
 import io.github.dayco.external.ui.vo.User;
 import io.github.dayco.posts.application.PostsService;
 import io.github.dayco.posts.domain.Posts;
+import io.github.dayco.posts.ui.dto.PostsLikeDto;
 import io.github.dayco.posts.ui.dto.PostsListResponseDto;
 import io.github.dayco.posts.ui.dto.PostsResponseDto;
 import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
@@ -89,5 +90,43 @@ public class PostsController {
     @GetMapping("/all")
     public List<PostsListResponseDto> all() {
         return postsService.findAll();
+    }
+
+
+    /**
+     * Posts Like 건수를 증가시킨다.
+     * @param id Posts ID
+     * @param authorizationHeader
+     * @return Like 건수
+     */
+    @PostMapping("/like/increase/{id}")
+    public PostsLikeDto increaseLike(@PathVariable Long id,
+                                     @RequestHeader(value = "Authorization") String authorizationHeader) {
+        User user = userClient.getCurrentUser(authorizationHeader);
+        if(user == null) {
+            throw new IllegalArgumentException("User doesn't Exist");
+        }
+        return postsService.increaseLike(id, user.getUserId());
+    }
+
+    /**
+     * Posts Like 건수를 감소시킨다.
+     * @param id Posts ID
+     * @param authorizationHeader
+     * @return Like 건수
+     */
+    @PostMapping("/like/decrease/{id}")
+    public PostsLikeDto decreaseLike(@PathVariable Long id,
+                                     @RequestHeader(value = "Authorization") String authorizationHeader) {
+        User user = userClient.getCurrentUser(authorizationHeader);
+        if(user == null) {
+            throw new IllegalArgumentException("User doesn't Exist");
+        }
+        return postsService.decreaseLike(id, user.getUserId());
+    }
+
+    @GetMapping("/likes/{id}")
+    public PostsLikeDto getLikes(@PathVariable Long id) {
+        return postsService.getLikes(id);
     }
 }
