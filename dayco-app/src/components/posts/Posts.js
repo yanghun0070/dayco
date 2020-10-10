@@ -3,12 +3,12 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { Card, ListGroup, ListGroupItem, Badge, DropdownButton, DropdownItem, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee, faThumbsUp, faRainbow, faRemoveFormat,
+import { faCoffee, faThumbsUp, faThumbtack, faRainbow, faRemoveFormat,
   faAngleDown, faComment } from '@fortawesome/free-solid-svg-icons'
 import { showPostsEditModal, showPostsDeleteModal } from '../../actions/posts';
 import { getPostsLikeAddCount, increaseLikeCount, dispatchBeforeIncreaseLike } from '../../actions/postsLike';
 import Cookies from "js-cookie";
-
+import Moment from "react-moment";
 
 class Posts extends Component {
 
@@ -53,7 +53,6 @@ class Posts extends Component {
     }
 
     render(){
-        const modifiedDateStr = new Date(this.props.modifiedDate);
         return (
             <Card>
                 <Card.Header className="text-right">
@@ -70,13 +69,14 @@ class Posts extends Component {
                     <Card.Title>{this.props.title}</Card.Title>
                     <Card.Text>
                     {this.props.content}
-                    </Card.Text>
+                    </Card.Text> 
                 </Card.Body>
                 <ListGroup className="list-group-flush">
                     <ListGroupItem>
                         <Badge variant="dark"> Author:{this.props.author}</Badge>,  
                         <Badge variant="dark">
-                            변경 시간: {modifiedDateStr.toUTCString()}
+                            변경 시간: 
+                            <Moment date={this.props.modifiedDate} format="YYYY-MM-DD HH:mm:ssZ"/>
                         </Badge>
                     </ListGroupItem>
                 </ListGroup>

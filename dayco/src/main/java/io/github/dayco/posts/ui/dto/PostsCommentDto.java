@@ -15,8 +15,8 @@ public class PostsCommentDto {
     private Long commentId; //댓글 ID
     private User author; //등록자
     private String comment; //댓글
-    private LocalDateTime createTime; //생성 시간
-    private LocalDateTime modifiedTime; //수정 시간
+    private String createTime; //생성 시간 YYYY-MM-dd'T'HH:mm:ss
+    private String modifiedTime; //수정 시간 YYYY-MM-dd'T'HH:mm:ss
 
     public PostsCommentDto(Long postsId, Long commentId, User author, String comment,
                            LocalDateTime createTime, LocalDateTime modifiedTime) {
@@ -24,8 +24,8 @@ public class PostsCommentDto {
         this.commentId = commentId;
         this.author = author;
         this.comment = comment;
-        this.createTime = createTime;
-        this.modifiedTime = modifiedTime;
+        this.createTime = createTime.toString();
+        this.modifiedTime = modifiedTime.toString();
     }
 
 }
