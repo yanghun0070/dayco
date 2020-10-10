@@ -14,12 +14,25 @@ export default {
   posts: {
     list: [],
     page: 0,
-    rowNum : 0
+    rowNum : 0,
+    detail: {}
   },
-  postsEtc: { //posts comment, like 처리
+  postsEtc: { // like 처리
     likes: [],
-    comment: []
+    detail: {}
   },
+  postsComment: {
+    comments: [],
+    status: 'get', //get, edit, remove
+    detail: {
+      page: 0,
+      rowNum : 0,
+      comments: []
+    }
+  },
+  postsDetailModal: { //게시글 상세 Modal 창 보여주기 여부
+    isShow: false
+  }, 
   postsEditModal: {
     isShow: false,
     id: -1,

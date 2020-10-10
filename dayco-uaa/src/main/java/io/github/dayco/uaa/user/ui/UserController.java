@@ -36,7 +36,7 @@ public class UserController {
                 {
                     return UserDto.builder()
                                   .userId(user.getUserId())
-                                  .email(user.getEmail().orElse(null).getEmail())
+                                  .email(user.getEmail().isEmpty() ? null: user.getEmail().get().getEmail())
                                   .age(user.getAge().orElse(null))
                                   .gender(user.getGender().orElse(null))
                                   .picture(user.getPicture().orElse(null))

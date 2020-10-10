@@ -13,7 +13,7 @@ export function posts(state = initialState.posts, action) {
             const { postsList } = action;
             return Object.assign({}, state, {list: [...postsList]});
         case types.posts.CREATE_SUCCESS:
-            const { posts } = action; 
+            const { posts } = action;
             /**
              * week reference problem
              * state.list.unshift(posts); (x)
@@ -35,17 +35,17 @@ export function posts(state = initialState.posts, action) {
             });
             return Object.assign({}, state, {list: [...editPostsList]});
         case types.posts.DELETE_SUCCESS:
-            const {deletePostsId} = action;
+            const { deletePostsId } = action;
             const deletePostsList = state.list.filter(function(posts){
                 return (posts.id !== deletePostsId);
             }).map((posts) => {
                 return posts;
             });
             return Object.assign({}, state, {list: [...deletePostsList]});
-        case types.posts.EDIT_FAIL:
-            return state;
-        case types.posts.LIST_FAIL:
-            return state;
+        case types.posts.GET_SUCCESS:
+            const { detailOfPosts } = action; 
+            console.log(detailOfPosts)
+            return Object.assign({}, state, {detail:  detailOfPosts  });
         default:
             return state;
     }
@@ -87,3 +87,19 @@ export function postsEditModal(state = initialState.postsEditModal, action) {
             return state;
     }
 }
+
+/**
+ * the posts detail modal reducer is responsible
+ * @param {*} state 
+ * @param {*} action 
+ */
+export function postsDetailModal(state = initialState.postsDetailModal, action) {
+    switch(action.type) {
+        case types.postsDetailModal.MODAL_SHOW:
+            return Object.assign({}, state, {isShow: true});
+        case types.postsDetailModal.MODAL_HIDE:
+            return Object.assign({}, state, { isShow: false});
+        default:
+            return state;
+    }
+} 

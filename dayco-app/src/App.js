@@ -5,6 +5,7 @@ import Login from './components/user/login/Login';
 import SignUp from './components/user/signup/SignUp';
 import PostsList from './components/posts/PostsList';
 import PostsEditModal from './components/posts/PostEditModal';
+import PostsDetailModal from './components/posts/PostsDetailModal';
 import OAuth2RedirectHandler from './components/user/oauth/OAuth2RedirectHandler';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
@@ -30,7 +31,7 @@ class App extends Component {
   componentDidMount() {
     this.props.getCurrentUser();
   }
-
+  
   render() {
     const token = Cookies.get("token") ? Cookies.get("token") : null;
     const customHeaders = {
@@ -65,11 +66,12 @@ class App extends Component {
         <Header />
         <Alerts />
         <PostsEditModal clientRef={this.clientRef} />
+        <PostsDetailModal clientRef={this.clientRef} />
         <Container>
           <Switch>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp}/>
-            <Route path="/home" component={() => <PostsList clientRef={this.clientRef}/>} />
+            <Route path="/home" component={() => <PostsList clientRef={this.clientRef} />} />
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}/>
           </Switch>
         </Container>

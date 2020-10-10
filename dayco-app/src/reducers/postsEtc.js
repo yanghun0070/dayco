@@ -2,13 +2,13 @@ import initialState from '../constants/initialState';
 import * as types from '../constants/types';
 
 /**
- * Like, Comment 처리
+ * Like 처리
  * @param {*} state
  * @param {*} action
  */
 export function postsEtc(state = initialState.postsEtc, action) {
   switch (action.type) {
-    case types.postsLikeCount.GET_SUCCESS:
+    case types.postsLikeCount.ADD_SUCESS:
       const { like } = action;
       let duplicatedLike = state.likes.filter(l => (l.id == like.id))
       /**
@@ -43,19 +43,18 @@ export function postsEtc(state = initialState.postsEtc, action) {
         return like;
       });
       return Object.assign({}, state, {
-        likes: [...editLikesList]
+        likes: [...editLikesList],
+        detail: {
+          id: id,
+          likeCount: likeCount
+        }
       });
     case types.postsLikeCount.DECREASE_SUCCESS:
       return state;
-    case types.postsLikeCount.INCREASE_BEFORE:
-      return Object.assign({}, state, {
-        status: 'increment'
-      });
-    case types.postsLikeCount.DECREASE_BEFORE:
-      return Object.assign({}, state, {
-        status: 'decrement'
-      });
-    case types.postsLikeCount.GET_FAIL:
+    case types.postsLikeCount.GET_SUCCESS:
+      const { detailOfLikeCount } = action;
+      return Object.assign({}, state, {detail: detailOfLikeCount});
+    case types.postsLikeCount.ADD_FAIL:
       return state;
     case types.postsLikeCount.INCREASE_FAIL:
       return state;

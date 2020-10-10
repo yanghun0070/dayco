@@ -1,17 +1,17 @@
 import * as types from '../constants/types';
 import * as API from '../services/http';
 
-export function getPostsLikeCount(id) {
+export function getPostsLikeAddCount(id) {
   return dispatch => {
     return API.getPostsLikeCount(id)
                .then(async(response) => {
       dispatch({
-        type: types.postsLikeCount.GET_SUCCESS,
+        type: types.postsLikeCount.ADD_SUCESS,
         like: response.data
       })
     }).catch(function (error) {
       dispatch({
-        type: types.postsLikeCount.GET_FAIL
+        type: types.postsLikeCount.ADD_FAIL
       })
     })
   }

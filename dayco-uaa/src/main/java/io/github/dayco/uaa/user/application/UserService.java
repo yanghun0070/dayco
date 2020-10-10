@@ -25,7 +25,8 @@ public class UserService {
     }
 
     public void join(String userId, String password, String email) {
-        User changedUser = new User(userId, password, email);
+        User changedUser = new User(userId, password);
+        changedUser.setEmail(email);
         changedUser.addUserAuthorization(new UserAuthorization(changedUser, "USER"));
         userJpaRepository.save(changedUser);
     }

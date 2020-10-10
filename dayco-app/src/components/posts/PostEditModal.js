@@ -43,6 +43,7 @@ class PostsEditModal extends Component {
                 content: this.state.requestContent
             })
             this.sendMessage("/app/posts", jsonStr);
+            this.props.hidePostsEditModal();
         } else {
             this.props.createPosts(this.state.requestTitle, this.state.requestContent);
         }
@@ -58,6 +59,7 @@ class PostsEditModal extends Component {
                 content: this.state.requestContent
             })
             this.sendMessage("/app/posts", jsonStr);
+            this.props.hidePostsEditModal();
         } else {
             this.props.editPosts(this.props.id, this.state.requestTitle, this.state.requestContent, this.props.author)
         }
@@ -71,6 +73,7 @@ class PostsEditModal extends Component {
                 postsId: this.props.id
             })
             this.sendMessage("/app/posts", jsonStr);
+            this.props.hidePostsEditModal();
         } else {
             this.props.deletePosts(this.props.id, this.props.author);
         }

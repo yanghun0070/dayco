@@ -114,3 +114,96 @@ export function increaseLikeCount(postsId) {
         }
     });
 }
+
+// 게시글 댓글을 페이징 처리로 조회한다.
+export function getPageOfComments(postsId, page, rowNum) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.get(API_BASE_URL + "/posts/comments/page", {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+         },
+         params: {
+            postsId: postsId,
+            page: page,
+            rowNum: rowNum
+         }
+    })
+} 
+
+// 전체 게시글 댓글 페이징 처리로 조회한다. 
+export function getPageOfCommentsForPostsIds(postsIds, page, rowNum) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.get(API_BASE_URL + "/posts/comments", {
+        headers: {
+            'Authorization': token
+         },
+         params: {
+            postsIds: postsIds.join(','),
+            page: page,
+            rowNum: rowNum
+         }
+    });
+}
+
+// 게시글 댓글을 생성한다.
+export function createPostsComment(postsId, comment) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.post(API_BASE_URL + "/posts/comment", null,{
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        },
+        params: {
+            postsId: postsId,
+            comment: comment
+        }
+    });
+}
+
+// 게시글 댓글을 수정시킨다.
+export function editPostsComment(commentId, comment) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.put(API_BASE_URL + "/posts/comment/" + commentId, {
+        comment: comment
+    }, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        },
+        params: {
+            comment: comment
+        }
+    });
+}
+
+// 게시글 댓글을 삭제시킨다.
+export function deletePostsComment(commentId) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.delete(API_BASE_URL + "/posts/comment/" + commentId, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+         }
+    });
+}
+
+// Posts Id 값에 연관된 Posts 정보, 댓글, Like 건수를 조회한다.
+export function getDetailPostsAndCommentsAndLikeCnt(postsId, page, rowNum) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+
+    //Posts Id 값에 연관된 Posts 정보를 조회한다.
+    const requestPosts = axios.get(API_BASE_URL + "/posts/" + postsId, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+         }
+    })
+
+    //Posts Id 값에 연관된 Posts 댓글 정보를 조회한다.
+    const requestPostsComments = getPageOfComments(postsId, page, rowNum);
+
+    //Posts Id 값에 연관된 Posts Like 건수를 조회한다.
+    const requestPostsLikeCount = getPostsLikeCount(postsId);
+    return axios.all([requestPosts, requestPostsComments, requestPostsLikeCount]);
+}
