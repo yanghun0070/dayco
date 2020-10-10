@@ -130,6 +130,10 @@ public class User implements UserDetails {
         return Optional.ofNullable(picture);
     }
 
+    public void setEmail(String email) {
+        this.email = new Email(email);
+    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

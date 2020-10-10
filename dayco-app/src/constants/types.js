@@ -29,18 +29,38 @@ export const postsEditModal = {
     MODAL_HIDE: 'dayco-app/posts-modal/hide'
 }
 
+export const postsDetailModal = {
+    MODAL_SHOW: 'dayco-app/postsdetail-modal/show',
+    MODAL_HIDE: 'dayco-app/postsdetail-modal/hide'
+}
+
 export const alert = {
     ALERT_CREATE : 'dayco-app/alert/create',
     ALERT_REMOVE : 'dayco-app/alert/remove' 
 }
 
 export const postsLikeCount = {
+    ADD_SUCESS: 'dayco-app/posts/like/add/success',
     GET_SUCCESS: 'dayco-app/posts/like/get/success',
     INCREASE_SUCCESS : 'dayco-app/posts/like/increase/success',
     DECREASE_SUCCESS : 'dayco-app/posts/like/decrease/success',
-    GET_FAIL: 'dayco-app/posts/like/get/fail',
+    ADD_FAIL: 'dayco-app/posts/like/increase/add/fail',
+    GET_FAIL: 'dayco-app/posts/like/increase/get/fail',
     INCREASE_FAIL : 'dayco-app/posts/like/increase/fail',
     DECREASE_FAIL : 'dayco-app/posts/like/decrease/fail'
+}
+
+export const postsComment = {
+    PAGING_LIST_SUCCESS: 'dayco-app/posts/comment/paging-list/success',
+    PAGING_DETAIL_LIST_SUCCESS: 'dayco-app/posts/comment/paging-detail-list/success',
+    CREATE_SUCCESS: 'dayco-app/posts/comment/create/success',
+    EDIT_SUCCESS: 'dayco-app/posts/comment/edit/success',
+    DELETE_SUCCESS: 'dayco-app/posts/comment/delete/success',
+    PAGING_LIST_FAIL: 'dayco-app/posts/comment/paginglist/fail',
+    PAGING_DETAIL_LIST_FAIL: 'dayco-app/posts/comment/paging-detail-list/fail',
+    CREATE_FAIL: 'dayco-app/posts/comment/create/fail',
+    EDIT_FAIL: 'dayco-app/posts/comment/edit/fail',
+    DELETE_FAIL: 'dayco-app/posts/comment/delete/fail',
 }
 
 export const actionStatus = {

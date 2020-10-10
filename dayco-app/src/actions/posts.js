@@ -1,9 +1,12 @@
 import * as types from '../constants/types';
 import * as API from '../services/http';
 import * as Alert from '../actions/alert';
+import axios from 'axios';
+import { MAX_SHOW_POST_COMMENT } from "../constants";
+
 
 /**
- * 게시판 목록 전체 조회 성공
+ * 게시글 목록 전체 조회 성공
  * @param {*} posts 
  */
 export function getAllPostsSuccess(postsList) {
@@ -14,7 +17,7 @@ export function getAllPostsSuccess(postsList) {
 }
 
 /**
- * 게시판 목록 조회 성공
+ * 게시글 목록 조회 성공
  */
 export function getPostsSuccess() {
     return {
@@ -33,7 +36,7 @@ export function createPostsSuccess(posts) {
 }
 
 /**
- * 게시판 목록 수정 성공
+ * 게시글 목록 수정 성공
  */
 export function editPostsSuccess(editPosts) {
     return {
@@ -43,7 +46,7 @@ export function editPostsSuccess(editPosts) {
 }
 
 /**
- * 게시판 목록 전체 조회 실패
+ * 게시글 목록 전체 조회 실패
  */
 export function getAllPostsFail() {
     return {
@@ -52,7 +55,7 @@ export function getAllPostsFail() {
 }
 
 /**
- * 게시판 목록 조회 실패
+ * 게시글 목록 조회 실패
  */
 export function getPostsFail() {
     return {
@@ -61,7 +64,7 @@ export function getPostsFail() {
 }
 
 /**
- * 게시판 목록 수정 실패
+ * 게시글 목록 수정 실패
  */
 export function editPostsFail() {
     return {
@@ -70,7 +73,7 @@ export function editPostsFail() {
 }
 
 /**
- * 게시판 생성 실패
+ * 게시글 생성 실패
  */
 export function createPostsFail() {
     return {
@@ -78,12 +81,30 @@ export function createPostsFail() {
     };
 }
 
+/**
+ * 모든 게시글을 조회
+ */
 export function getAllPosts() {
     return dispatch => {
         return API.getAllPosts()
         .then(async(response) => {
             var result = response.data
             dispatch(getAllPostsSuccess(result));
+            //Posts 가 있을 경우에만 데이터 조회 
+            if(result != null && result.length > 0) {
+                var postsIds = result.map ((posts) =>  posts.id);
+                API.getPageOfCommentsForPostsIds(postsIds, 0, MAX_SHOW_POST_COMMENT)
+                .then(async(responseComment) => {
+                    dispatch({ 
+                        type: types.postsComment.PAGING_LIST_SUCCESS,
+                        pageOfComments: responseComment.data
+                    })
+                }).catch(function (error) {
+                    dispatch({
+                        type: types.postsComment.PAGING_LIST_FAIL
+                    })
+                })
+            }
         }).catch(function (error) {
             dispatch(getAllPostsFail());
         })
@@ -278,4 +299,52 @@ export function dispatchBeforeDelPosts() {
             type: types.actionStatus.SOCKET_POST_DELETE
         })
     };
+}
+
+// 게시물 상세 Modal 창을 숨긴다. 
+export function dispatchHidePostsDetailModal() {
+    return dispatch => {
+        dispatch({
+            type: types.postsDetailModal.MODAL_HIDE
+        })
+    };
+}
+
+
+export function getDetailPostsAndCommentsAndLikeCnt(postsId, page, rowNum) {
+    return dispatch => {
+        return API.getDetailPostsAndCommentsAndLikeCnt(postsId, page, rowNum)
+            .then(axios.spread((...responses) => {
+                const responsePosts = responses[0];
+                const responsePostsComments = responses[1];
+                const responsePostsLikeCount = responses[2];
+                // 게시물 정보를 전달한다.
+                dispatch({
+                    type: types.posts.GET_SUCCESS,
+                    detailOfPosts: responsePosts.data
+                });
+                // 게시물 댓글 정보를 전달한다.
+                dispatch({
+                    type: types.postsComment.PAGING_DETAIL_LIST_SUCCESS,
+                    pageOfComments: responsePostsComments.data
+                });
+                // 좋아요 정보를 전달한다.
+                dispatch({
+                    type: types.postsLikeCount.GET_SUCCESS,
+                    detailOfLikeCount: responsePostsLikeCount.data
+                })
+
+                // 게시물 상세 Modal 창을 보여주기 위해, modal show 상태를 전달한다.
+                dispatch({ 
+                    type: types.postsDetailModal.MODAL_SHOW
+                })
+        })).catch(errors => {
+            dispatch({
+                type: types.posts.GET_FAIL
+            });      
+            dispatch({
+                type: types.postsComment.PAGING_DETAIL_LIST_FAIL
+            });      
+        })
+    }
 }
