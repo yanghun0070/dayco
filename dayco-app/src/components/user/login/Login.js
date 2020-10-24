@@ -7,7 +7,7 @@ import { withRouter } from "react-router";
 import googleLogo from '../../img/google-logo.png';
 import githubLogo from '../../img/github-logo.png';
 import naverLogo from '../../img/naver-logo.png';
-import { GOOGLE_AUTH_URL, GITHUB_AUTH_URL, NAVER_AUTH_URL } from '../../../constants';
+import { GOOGLE_AUTH_URL, GITHUB_AUTH_URL, NAVER_AUTH_URL, TISTORY_AUTH_URL } from '../../../constants';
 
 class Login extends Component {
 

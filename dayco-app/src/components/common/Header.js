@@ -9,6 +9,8 @@ import signup from '../img/signup.png';
 import photo from '../img/photo.png';
 import home from '../img/home.png';
 import { LinkContainer } from "react-router-bootstrap";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSmileWink, faUserSecret } from '@fortawesome/free-solid-svg-icons'
 
 class Header extends Component {
 
@@ -36,20 +38,29 @@ class Header extends Component {
                         </Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Brand href="#" onClick={this.handleClick}>
-                        <Image src={photo} alt="postsedit" width={30} height={30}/>
+                        <Image src={photo} alt="posts" width={30} height={30}/>
                     </Navbar.Brand>
-                    <Navbar.Text>
-                    {this.props.user.currentUser.picture ? (
-                                        <Image src={this.props.user.currentUser.picture} alt={this.props.user.currentUser.name}
-                                        width={26} height={26}
-                                        roundedCircle/>
-                                    ) : (
-                                        <div className="text-avatar">
-                                            <span>{this.props.user.currentUser.name}</span>
-                                        </div>
-                                    )}  
-                    &nbsp;<a href="#" onClick={this.onLogout}>{this.props.user.currentUser.userId}</a>
-                    </Navbar.Text>
+                    <LinkContainer to="/profile">
+                        <Navbar.Brand>
+                            <FontAwesomeIcon icon={faUserSecret} size="lg" />
+                        </Navbar.Brand>
+                    </LinkContainer>
+                    <Navbar.Brand href="#" onClick={this.onLogout}>
+                        {this.props.user.currentUser.picture ? (
+                                            <Image 
+                                            // src={require(this.props.user.currentUser.picture)} 
+                                            style={{ backgroundImage: `url(${this.props.user.currentUser.picture})`}}     
+                                            alt={this.props.user.currentUser.name}
+                                            width={26} height={26}
+                                            roundedCircle
+                                            />
+                                        ) : (
+                                            <FontAwesomeIcon icon={faSmileWink} size="lg" color="Violet">
+                                                {this.props.user.currentUser.name}
+                                            </FontAwesomeIcon>
+                                        )}  
+                        &nbsp;{this.props.user.currentUser.userId}
+                    </Navbar.Brand>
                 </Navbar.Collapse> :
                 <Navbar.Collapse className="justify-content-end">
                     <Navbar>

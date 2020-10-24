@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { ListGroup, ListGroupItem, Image, InputGroup, FormControl, Button, Card } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Image, InputGroup, FormControl, Button, Card, Badge } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { createPostsComment, editPostsComment, deletePostsComment } from '../../actions/postsComment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faRainbow, faReply, faRemoveFormat, faStop } from '@fortawesome/free-solid-svg-icons'
+import { faSmileWink, faReply, faRemoveFormat, faStop } from '@fortawesome/free-solid-svg-icons'
 
 class PostsComment extends Component {
     
@@ -71,8 +71,11 @@ class PostsComment extends Component {
                 && this.state.isEditShow == true) ?
                 ( 
                 <InputGroup>
-                    <Image src={this.props.picture}
-                        width={26} height={26} roundedCircle />
+                    {(this.props.picture) ?
+                    (<Image src={this.props.picture}
+                        width={26} height={26} roundedCircle />):
+                    (<FontAwesomeIcon icon={faSmileWink} size="lg" color="Violet"/>)
+                    }
                     <span><strong>{this.props.author}</strong></span>
                     &nbsp;
                     <FormControl
@@ -102,8 +105,11 @@ class PostsComment extends Component {
                 :
                 ( 
                 <div>
-                    <Image src={this.props.picture}
-                        width={26} height={26} roundedCircle />
+                    {(this.props.picture) ?
+                    (<Image src={this.props.picture}
+                        width={26} height={26} roundedCircle />):
+                    (<FontAwesomeIcon icon={faSmileWink} size="lg" color="MediumSeaGreen"/>)
+                    }
                     <span><strong>{this.props.author}</strong></span>
                     &nbsp;
                     {this.props.comment}

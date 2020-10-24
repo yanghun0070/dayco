@@ -3,6 +3,7 @@ import Header from './components/common/Header';
 import Alerts from './components/common/Alerts';
 import Login from './components/user/login/Login';
 import SignUp from './components/user/signup/SignUp';
+import Profile from './components/user/profile/Profile';
 import PostsList from './components/posts/PostsList';
 import PostsEditModal from './components/posts/PostEditModal';
 import PostsDetailModal from './components/posts/PostsDetailModal';
@@ -37,7 +38,6 @@ class App extends Component {
     const customHeaders = {
         "Authorization": token
     };
-
     return (
     <Router forceRefresh={true} >
       <div>
@@ -49,6 +49,7 @@ class App extends Component {
           subscribeHeaders={customHeaders}      
           //message 보냈을 때의 callback
           onMessage={(msg) => {
+            console.log(msg)
             if(this.props.socketActionStatus === 'postsCreate') {
                 this.props.dispatchCreatePostsSuccess(msg);
             } else if(this.props.socketActionStatus === 'postsEdit') {
@@ -71,6 +72,7 @@ class App extends Component {
           <Switch>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp}/>
+            <Route path="/profile" render={() => <Profile email={(this.props.user.currentUser) ? this.props.user.currentUser.email : ''}/> } />
             <Route path="/home" component={() => <PostsList clientRef={this.clientRef} />} />
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}/>
           </Switch>

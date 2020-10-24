@@ -42,10 +42,10 @@ public class PostsCommentJpaRepositoryTest {
 
     @Order(1)
     @Test
-    public void findByPostsId_Equals_True() {
+    public void findByPostsIdOrderByIdDesc_Equals_True() {
         Posts posts = postsJpaRepository.findAll().get(0);
         PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<PostsComment> postsCommentPage = postsCommentJpaRepository.findByPostsId(posts.getId(), pageRequest);
+        Page<PostsComment> postsCommentPage = postsCommentJpaRepository.findByPostsIdOrderByIdDesc(posts.getId(), pageRequest);
         assertEquals(postsCommentPage.getTotalPages(), 1);
         assertEquals(postsCommentPage.getNumber(), 0);
         List<PostsComment> postsComments = postsCommentPage.getContent();

@@ -96,6 +96,19 @@ public class User implements UserDetails {
         return this;
     }
 
+    public User update(String email, Optional<String> password, Optional<String> picture) {
+
+        this.email = new Email(email);
+
+        if(password.isPresent()) {
+            this.password = new Password(password.get());
+        }
+        if(picture.isPresent()) {
+            this.picture =  picture.get();
+        }
+        return this;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userAuthorizations

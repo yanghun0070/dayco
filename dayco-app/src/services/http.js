@@ -207,3 +207,19 @@ export function getDetailPostsAndCommentsAndLikeCnt(postsId, page, rowNum) {
     const requestPostsLikeCount = getPostsLikeCount(postsId);
     return axios.all([requestPosts, requestPostsComments, requestPostsLikeCount]);
 }
+
+//Profile 변경한다.
+export function changeProfile(email, pw, fileBase64, fileName) {
+    const token = Cookies.get("token") ? Cookies.get("token") : null;
+    return axios.post(API_BASE_URL + "/profile/change", {
+         email: email,
+         password: pw,
+         fileBase64: fileBase64,
+         fileName: fileName
+    }, {
+        headers: {
+            'Content-type': 'application/json',
+            'Authorization': token
+        }
+    });
+}
