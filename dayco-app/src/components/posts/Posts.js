@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
-import { Card, ListGroup, ListGroupItem, Badge, DropdownButton, DropdownItem, Button } from 'react-bootstrap';
+import { Card, ListGroup, ListGroupItem, Dropdown, Badge, DropdownButton, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faThumbsUp, faThumbtack, faRainbow, faRemoveFormat,
   faAngleDown, faComment } from '@fortawesome/free-solid-svg-icons'
@@ -58,10 +58,12 @@ class Posts extends Component {
                 <Card.Header className="text-right">
                     <DropdownButton size="sm" title={<FontAwesomeIcon icon={faCoffee} />}
                         onSelect={this.handleSelect}>
-                        <DropdownItem eventKey='edit'
-                        ><FontAwesomeIcon icon={faRainbow} /> Edit</DropdownItem>
-                        <DropdownItem eventKey='delete'
-                        ><FontAwesomeIcon icon={faRemoveFormat} /> Delete</DropdownItem>
+                        <Dropdown.Item eventKey='edit'>
+                            <FontAwesomeIcon icon={faRainbow} /> Edit
+                        </Dropdown.Item>
+                        <Dropdown.Item eventKey='delete'>
+                            <FontAwesomeIcon icon={faRemoveFormat} /> Delete
+                        </Dropdown.Item>
                     </DropdownButton>
                 </Card.Header>
                 <Card.Img variant="top" src={this.props.thumbnail} />

@@ -27,7 +27,7 @@ spring:
         - id: dayco-uaa
           uri: http://localhost:9999
           predicates:
-            - Path=/api/user/**,/api/auth/**,/api/oauth2/**,/api/manager/**
+            - Path=/api/user/**,/api/auth/**,/api/oauth2/**,/api/manager/**,/api/profile/**
           filters:
             - StripPrefix=1
             - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin

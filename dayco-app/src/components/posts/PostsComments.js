@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { createPostsComment } from '../../actions/postsComment';
 import PostsComment from './PostsComment';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSmileWink } from '@fortawesome/free-solid-svg-icons';
 
 class PostsComments extends Component {
     
@@ -59,8 +61,11 @@ class PostsComments extends Component {
                     <InputGroup className="mb-3">
                         <InputGroup.Prepend>
                             <InputGroup.Text>
-                                <Image src={this.props.user.currentUser.picture} 
-                                width={26} height={26} roundedCircle/>
+                                {(this.props.user.currentUser.picture) ?
+                                (<Image src={this.props.user.currentUser.picture}
+                                    width={26} height={26} roundedCircle />):
+                                (<FontAwesomeIcon icon={faSmileWink} size="lg" color="Violet"/>)
+                                }
                             </InputGroup.Text>
                         </InputGroup.Prepend>
                         <FormControl
