@@ -45,6 +45,7 @@ class PostsComment extends Component {
     // 댓글을 삭제한다.
     deleteComment = () => {
         this.props.deletePostsComment(
+            this.props.postsId,
             this.props.id
         )
     }
@@ -142,7 +143,7 @@ class PostsComment extends Component {
     }
 }
 
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
 	return {
         user: state.user
     };

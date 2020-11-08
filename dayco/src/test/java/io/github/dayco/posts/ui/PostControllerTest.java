@@ -19,8 +19,6 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.dayco.posts.domain.Posts;
 import io.github.dayco.posts.infra.PostsJpaRepository;
-import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
-import io.github.dayco.posts.ui.dto.PostsUpdateRequestDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;

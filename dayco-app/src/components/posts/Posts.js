@@ -6,9 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoffee, faThumbsUp, faThumbtack, faRainbow, faRemoveFormat,
   faAngleDown, faComment } from '@fortawesome/free-solid-svg-icons'
 import { showPostsEditModal, showPostsDeleteModal } from '../../actions/posts';
-import { getPostsLikeAddCount, increaseLikeCount, dispatchBeforeIncreaseLike } from '../../actions/postsLike';
+import { increaseLikeCount } from '../../actions/postsLike';
 import Cookies from "js-cookie";
 import Moment from "react-moment";
+import { POSTS_EDIT_MODAL, POSTS_DELETE_MODAL, POSTS_LIKE_INCREASED } from "../../constants";
 
 class Posts extends Component {
 
@@ -18,19 +19,23 @@ class Posts extends Component {
     }
 
     handleSelect(e) {
-        if(e === 'edit') {
-            this.props.showPostsEditModal(this.props.id, this.props.title, this.props.content, this.props.author);
-        } else if(e === 'delete') {
-            this.props.showPostsDeleteModal(this.props.id, this.props.title, this.props.author);
+        if(e === POSTS_EDIT_MODAL) {
+            this.props.showPostsEditModal(this.props.id, 
+                this.props.title, 
+                this.props.content, 
+                this.props.author);
+        } else if(e === POSTS_DELETE_MODAL) {
+            this.props.showPostsDeleteModal(this.props.id, 
+                this.props.title, 
+                this.props.author);
         }
     }
   
     increaseLikeCnt = () => {
         if(this.props.isSocket === true) {
-            this.props.dispatchBeforeIncreaseLike();
-            let jsonStr = JSON.stringify({
-            type: "increase",
-            postsId: this.props.id
+            const jsonStr = JSON.stringify({
+                status: POSTS_LIKE_INCREASED,
+                id: this.props.id
             })
             this.sendMessage("/app/posts/like", jsonStr);
         } else {
@@ -38,10 +43,6 @@ class Posts extends Component {
         }
     };
  
-    componentDidMount() {
-        this.props.getPostsLikeAddCount(this.props.id);
-    }
-    
     sendMessage = (topic, jsonStr) => {
         const token = Cookies.get("token") ? Cookies.get("token") : null;
         const customHeaders = {
@@ -100,10 +101,10 @@ class Posts extends Component {
 const mapStateToProps = (state) => {
 	return {
 		posts: state.posts,
-        isSocket: state.socket.isSocket
+        isSocket: state.socket.isSocket 
 	};
 }
 
 export default withRouter(connect(mapStateToProps, {showPostsEditModal, showPostsDeleteModal,
-    getPostsLikeAddCount, increaseLikeCount, dispatchBeforeIncreaseLike})(Posts));
+    increaseLikeCount})(Posts));
   

@@ -4,9 +4,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
-import java.util.Optional;
-
-import javax.swing.text.html.Option;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,15 +25,14 @@ import io.github.dayco.common.presentation.vo.GlobalMessage;
 import io.github.dayco.common.presentation.vo.Result;
 import io.github.dayco.external.ui.UserClient;
 import io.github.dayco.external.ui.vo.User;
+import io.github.dayco.posts.application.PostsLikeService;
 import io.github.dayco.posts.application.PostsService;
 import io.github.dayco.posts.domain.Posts;
 import io.github.dayco.posts.domain.PostsComment;
 import io.github.dayco.posts.ui.dto.PostsCommentDto;
+import io.github.dayco.posts.ui.dto.PostsDto;
 import io.github.dayco.posts.ui.dto.PostsLikeDto;
-import io.github.dayco.posts.ui.dto.PostsListResponseDto;
 import io.github.dayco.posts.ui.dto.PostsResponseDto;
-import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
-import io.github.dayco.posts.ui.dto.PostsUpdateRequestDto;
 
 @RestController
 @RequestMapping("/posts")
@@ -46,45 +42,71 @@ public class PostsController {
     private UserClient userClient;
 
     private final PostsService postsService;
+    private final PostsLikeService postsLikeService;
 
     private final MessageSourceAccessor messageSourceAccessor;
 
     public PostsController(PostsService postsService,
+                           PostsLikeService postsLikeService,
                            MessageSourceAccessor messageSourceAccessor) {
         this.postsService = postsService;
+        this.postsLikeService = postsLikeService;
         this.messageSourceAccessor = messageSourceAccessor;
     }
 
+    /**
+     * Posts 생성한다.
+     * @param postsDto Posts 정보
+     * @param authorizationHeader 인증 Header
+     * @return Posts 생성 정보
+     */
     @PostMapping
-    public Posts create(@RequestBody PostsSaveRequestDto requestDto,
+    public Posts create(@ModelAttribute PostsDto postsDto,
                         @RequestHeader(value = "Authorization") String authorizationHeader) {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
         }
-        requestDto.setAuthor(user.getUserId());
-        return postsService.save(requestDto);
+        postsDto.setAuthor(user.getUserId());
+        return postsService.save(postsDto);
     }
 
+    /**
+     * Posts 를 변경한다.
+     * @param id Posts ID
+     * @param postsDto Posts 정보
+     * @param authorizationHeader 인증 Header
+     * @return Posts 수정된 정보
+     */
     @PutMapping("/{id}")
-    public Posts update(@PathVariable Long id, @RequestBody PostsUpdateRequestDto requestDto,
-                                        @RequestHeader(value = "Authorization") String authorizationHeader) {
+    public Posts update(@PathVariable Long id,
+                        @ModelAttribute PostsDto postsDto,
+                        @RequestHeader(value = "Authorization") String authorizationHeader) {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
         }
         // 작성자와 글 수정자와 다를 경우,
-        if(!requestDto.getAuthor().equals(user.getUserId())) {
+        if(!postsDto.getAuthor().equals(user.getUserId())) {
             throw new IllegalArgumentException("Different from author and post modifier");
         }
-        return postsService.update(id, requestDto);
+        return postsService.update(id, postsDto.getTitle(), postsDto.getContent());
     }
 
+    /**
+     * Posts 를 조회한다.
+     * @param id Posts ID
+     * @return Posts 정보
+     */
     @GetMapping("/{id}")
-    public PostsResponseDto get(@PathVariable Long id) {
-        return postsService.find(id);
+    public PostsDto get(@PathVariable Long id) {
+        return postsService.findWithCommentsAndLikeCnt(id);
     }
 
+    /**
+     * Posts 를 삭제한다.
+     * @param id Posts ID
+     */
     @DeleteMapping("/{id}")
     public Result<GlobalMessage> delete(@PathVariable Long id) {
         postsService.delete(id);
@@ -97,7 +119,7 @@ public class PostsController {
     }
 
     @GetMapping("/all")
-    public List<PostsListResponseDto> all() {
+    public List<PostsDto> all() {
         return postsService.findAll();
     }
 
@@ -115,7 +137,9 @@ public class PostsController {
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
         }
-        return postsService.increaseLike(id, user.getUserId());
+        return new PostsLikeDto(id,
+                                user.getUserId(),
+                                postsService.increaseLike(id, user.getUserId()));
     }
 
     /**
@@ -131,12 +155,16 @@ public class PostsController {
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
         }
-        return postsService.decreaseLike(id, user.getUserId());
+
+        return new PostsLikeDto(id,
+                                user.getUserId(),
+                                postsService.decreaseLike(id,
+                                                          user.getUserId()));
     }
 
     @GetMapping("/likes/{id}")
     public PostsLikeDto getLikes(@PathVariable Long id) {
-        return postsService.getLikes(id);
+        return new PostsLikeDto(id, postsService.getLikes(id));
     }
 
     /**
@@ -207,11 +235,11 @@ public class PostsController {
      * 게시글 댓글을 삭제한다.
      * @param commentId 댓글 ID
      * @param authorizationHeader
-     * @return 삭제되어진 댓글 ID
+     * @return 삭제되어진 댓글 정보
      */
     @DeleteMapping("/comment/{commentId}")
-    public Long deleteComment(@PathVariable Long commentId,
-                                       @RequestHeader(value = "Authorization") String authorizationHeader) {
+    public PostsComment deleteComment(@PathVariable Long commentId,
+                                      @RequestHeader(value = "Authorization") String authorizationHeader) {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");

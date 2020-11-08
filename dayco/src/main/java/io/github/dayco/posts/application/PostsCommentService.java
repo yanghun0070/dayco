@@ -1,6 +1,7 @@
 package io.github.dayco.posts.application;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -27,8 +28,13 @@ public class PostsCommentService {
      * @param postsId Posts ID
      * @return
      */
-    public List<PostsComment> getPostsComments(Long postsId) {
+    public List<PostsComment> getPostsCommentsByPostsId(Long postsId) {
         return postsCommentJpaRepository.findByPostsId(postsId);
+    }
+
+    @Transactional
+    public Optional<PostsComment> getPostsComment(Long commentId) {
+        return postsCommentJpaRepository.findById(commentId);
     }
 
     /**
@@ -68,9 +74,11 @@ public class PostsCommentService {
     public PostsCommentDto createComment(Long postsId, User author, String comment) {
         Posts posts = new Posts();
         posts.setId(postsId);
-        PostsComment postsComment = postsCommentJpaRepository.save(
-                new PostsComment(
-                        posts, author.getUserId(), comment));
+        PostsComment postsComment = postsCommentJpaRepository
+                .save(new PostsComment(
+                        posts,
+                        author.getUserId(),
+                        comment));
         return new PostsCommentDto(postsComment.getPosts().getId(),
                                    postsComment.getId(),
                                    author,

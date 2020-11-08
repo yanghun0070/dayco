@@ -18,16 +18,17 @@ class PostsList extends Component {
     }
 
     render(){
-        let postsInfosHtml = this.props.posts.list.map((info) => {
-            
+        let postsInfosHtml = this.props.posts.list.map((posts) => {
             return <PostsWrapper 
-                key={info.id}
-                id={info.id}
-                title={info.title} 
+                key={posts.id}
+                id={posts.id}
+                title={posts.title} 
                 thumbnail={question}
-                author={info.author}
-                content={info.content}
-                modifiedDate={info.modifiedDate}
+                author={posts.author}
+                content={posts.content}
+                modifiedDate={posts.modifiedDate}
+                postsLike={posts.postsLike}
+                postsComments={(posts.postsComments != null) ? posts.postsComments: []}
                 clientRef={this.props.clientRef}
             />;
         })

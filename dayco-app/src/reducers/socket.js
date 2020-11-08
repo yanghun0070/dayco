@@ -11,29 +11,13 @@ import * as types from '../constants/types';
  */
 export function socket(state = initialState.socket, action) {
     switch (action.type) {
-        case types.actionStatus.SOCKET_POST_CREATE:
+        case types.socket.SOCKET_USED:
             return Object.assign({}, state, {
-                actionStatus: 'postsCreate'
+                isSocket: true
             });
-        case types.actionStatus.SOCKET_POST_EDIT:
+        case types.socket.SOCKET_NOT_USED:
             return Object.assign({}, state, {
-                actionStatus: 'postsEdit'
-            });
-        case types.actionStatus.SOCKET_POST_DELETE:
-            return Object.assign({}, state, {
-                actionStatus: 'postsDelete'
-            });
-        case types.actionStatus.SOCKET_POST_LIKE_GET:
-            return Object.assign({}, state, {
-                actionStatus: 'postsLikeGet'
-            });
-        case types.actionStatus.SOCKET_POST_LIKE_INCREASE:
-            return Object.assign({}, state, {
-                actionStatus: 'postsLikeIncrease'
-            });
-        case types.actionStatus.SOCKET_POST_LIKE_DECREASE:
-            return Object.assign({}, state, {
-                actionStatus: 'postsLikeDecrease'
+                isSocket: false
             });
         default:
             return state;
