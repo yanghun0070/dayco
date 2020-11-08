@@ -49,7 +49,6 @@ class PostsComments extends Component {
 
         return (
             <div>
-                <input type="hidden" value={this.props.postsCommentStatus}/>
                 <ListGroup>
                     {postsCommentsHtml}
                 </ListGroup>
@@ -90,9 +89,7 @@ class PostsComments extends Component {
 
 const mapStateToProps = (state, ownProps) => {
 	return {
-        user: state.user,
-        //부모 props 배열로 전달되면 rendering 이 안되므로, 상태를 바로 갱신 시켜주기 위해 status 사용
-        postsCommentStatus: state.postsComment.status, 
+        user: state.user
 	};
 }
 

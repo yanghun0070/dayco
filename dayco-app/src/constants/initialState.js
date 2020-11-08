@@ -13,22 +13,11 @@ export default {
   },
   posts: {
     list: [],
-    page: 0,
-    rowNum : 0,
-    detail: {}
-  },
-  postsEtc: { // like 처리
-    likes: [],
-    detail: {}
-  },
-  postsComment: {
-    comments: [],
-    status: 'get', //get, edit, remove
     detail: {
-      page: 0,
-      rowNum : 0,
-      comments: []
-    }
+      
+    },
+    page: 0,
+    rowNum : 0
   },
   postsDetailModal: { //게시글 상세 Modal 창 보여주기 여부
     isShow: false
@@ -39,13 +28,12 @@ export default {
     title: "",
     content: "",
     author: "",
-    status: 'create' //create, edit, hide
+    status: 'create' //create, edit, delete
   },
   alerts: {
     list: [], 
   },
   socket: {
-    isSocket: true,
-    actionStatus: ""
+    isSocket: true
   }
 }

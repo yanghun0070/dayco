@@ -16,3 +16,20 @@ export const NAVER_AUTH_URL = API_SOCIAL_URL + '/oauth2/authorization/naver?redi
 
 // 최대 보여질 Posts 댓글 개수
 export const MAX_SHOW_POST_COMMENT = 5;
+
+//Posts Edit Modal 
+export const POSTS_CREATE_MODAL = "create";
+export const POSTS_EDIT_MODAL = "edit";
+export const POSTS_DELETE_MODAL = "delete";
+export const POSTS_HIDE_MODAL = "hide"; 
+
+//Posts 상태
+export const POSTS_CREATED = "create";
+export const POSTS_EDITED = "edit";
+export const POSTS_DELETED = "delete";
+export const POSTS_GETED = "get";
+
+//Posts Like 상태
+export const POSTS_LIKE_GETED = "likeGet";
+export const POSTS_LIKE_INCREASED = "likeIncrease";
+export const POSTS_LIKE_DECREASED = "likeDecrease";

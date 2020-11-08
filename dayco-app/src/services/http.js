@@ -71,18 +71,17 @@ export function deletePosts(id) {
    });
 }
 
+// Posts Id 값에 연관된 Posts 정보, 댓글, Like 건수를 조회한다.
 export function getPosts(id) {
     const token = Cookies.get("token") ? Cookies.get("token") : null;
-    return axios.get(API_BASE_URL + "/posts", {
+    return axios.get(API_BASE_URL + "/posts/" + id, {
         headers: {
             'Content-type': 'application/json',
             'Authorization': token
-         },
-         params: {
-             id: id
          }
     })
 }
+
 
 export function getAllPosts() {
     const token = Cookies.get("token") ? Cookies.get("token") : null;
@@ -131,21 +130,6 @@ export function getPageOfComments(postsId, page, rowNum) {
     })
 } 
 
-// 전체 게시글 댓글 페이징 처리로 조회한다. 
-export function getPageOfCommentsForPostsIds(postsIds, page, rowNum) {
-    const token = Cookies.get("token") ? Cookies.get("token") : null;
-    return axios.get(API_BASE_URL + "/posts/comments", {
-        headers: {
-            'Authorization': token
-         },
-         params: {
-            postsIds: postsIds.join(','),
-            page: page,
-            rowNum: rowNum
-         }
-    });
-}
-
 // 게시글 댓글을 생성한다.
 export function createPostsComment(postsId, comment) {
     const token = Cookies.get("token") ? Cookies.get("token") : null;
@@ -186,26 +170,6 @@ export function deletePostsComment(commentId) {
             'Authorization': token
          }
     });
-}
-
-// Posts Id 값에 연관된 Posts 정보, 댓글, Like 건수를 조회한다.
-export function getDetailPostsAndCommentsAndLikeCnt(postsId, page, rowNum) {
-    const token = Cookies.get("token") ? Cookies.get("token") : null;
-
-    //Posts Id 값에 연관된 Posts 정보를 조회한다.
-    const requestPosts = axios.get(API_BASE_URL + "/posts/" + postsId, {
-        headers: {
-            'Content-type': 'application/json',
-            'Authorization': token
-         }
-    })
-
-    //Posts Id 값에 연관된 Posts 댓글 정보를 조회한다.
-    const requestPostsComments = getPageOfComments(postsId, page, rowNum);
-
-    //Posts Id 값에 연관된 Posts Like 건수를 조회한다.
-    const requestPostsLikeCount = getPostsLikeCount(postsId);
-    return axios.all([requestPosts, requestPostsComments, requestPostsLikeCount]);
 }
 
 //Profile 변경한다.

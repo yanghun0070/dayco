@@ -14,12 +14,9 @@ import io.github.dayco.posts.domain.Posts;
 import io.github.dayco.posts.domain.PostsComment;
 import io.github.dayco.posts.infra.PostsJpaRepository;
 import io.github.dayco.posts.ui.dto.PostsCommentDto;
-import io.github.dayco.posts.ui.dto.PostsLikeDto;
-import io.github.dayco.posts.ui.dto.PostsListResponseDto;
-import io.github.dayco.posts.ui.dto.PostsResponseDto;
-import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
-import io.github.dayco.posts.ui.dto.PostsUpdateRequestDto;
+import io.github.dayco.posts.ui.dto.PostsDto;
 
+import io.github.dayco.posts.ui.dto.PostsLikeDto;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,30 +27,52 @@ public class PostsService {
     private final PostsLikeService postsLikeService;
     private final PostsCommentService postsCommentService;
 
+    private static final int MAX_SHOW_COMMENT_COUNT = 5;
+    /**
+     *
+     * @param postsDto
+     * @return
+     */
     @Transactional
-    public Posts save(PostsSaveRequestDto requestDto) {
+    public Posts save(PostsDto postsDto) {
         return postsJpaRepository.save(
-                new Posts(requestDto.getTitle(),
-                          requestDto.getContent(),
-                          requestDto.getAuthor()));
+                new Posts(postsDto.getTitle(),
+                          postsDto.getContent(),
+                          postsDto.getAuthor()));
     }
 
     @Transactional
-    public Posts update(Long id, PostsUpdateRequestDto requestDto) {
+    public Posts save(String title, String content, String author) {
+        return postsJpaRepository.save(
+                new Posts(title, content, author));
+    }
+
+    @Transactional
+    public Posts update(Long id, String title, String content) {
         Posts posts = postsJpaRepository.findById(id)
                                         .orElseThrow(() -> new IllegalArgumentException(
                                                 "There are not posts. id = " + id));
-
-        posts.update(requestDto.getTitle(), requestDto.getContent());
+        posts.update(title, content);
         return posts;
     }
 
-    public PostsResponseDto find(Long id) {
-        Posts entity = postsJpaRepository.findById(id)
+    public PostsDto findWithCommentsAndLikeCnt(Long id) {
+        Posts posts = postsJpaRepository.findById(id)
                                          .orElseThrow(() -> new IllegalArgumentException(
                                                  "There are not posts. id = " + id));
 
-        return new PostsResponseDto(entity);
+        PostsDto postsDto = new PostsDto(posts);
+        postsDto.setPostsLike(new PostsLikeDto(posts.getId(),
+                                               postsLikeService.getLikes(posts.getId())));
+        postsDto.setPostsComments(
+                postsCommentService.getPostsCommentsByPaging(posts.getId(),
+                                                             0,
+                                                             MAX_SHOW_COMMENT_COUNT)
+                                   .get().map(postsComment -> {
+                    return new PostsCommentDto(postsComment,
+                                               userClient.getUser(postsComment.getAuthor()).get());
+                }).collect(Collectors.toList()));
+        return postsDto;
     }
 
     @Transactional
@@ -65,27 +84,38 @@ public class PostsService {
     }
 
     @Transactional(readOnly = true)
-    public List<PostsListResponseDto> findAll() {
-        return postsJpaRepository.findAllDesc().stream()
-                         .map(PostsListResponseDto::new)
-                         .collect(Collectors.toList());
+    public List<PostsDto> findAll() {
+        return postsJpaRepository.findAllDesc()
+                .stream().map(posts -> {
+                    PostsDto postsDto = new PostsDto(posts);
+                    postsDto.setPostsLike(new PostsLikeDto(posts.getId(),
+                                                           postsLikeService.getLikes(posts.getId())));
+                    postsDto.setPostsComments(
+                            postsCommentService.getPostsCommentsByPaging(posts.getId(),
+                                                                         0,
+                                                                         MAX_SHOW_COMMENT_COUNT)
+                            .get().map(postsComment -> {
+                                return new PostsCommentDto(postsComment,
+                                                    userClient.getUser(postsComment.getAuthor()).get());
+                            }).collect(Collectors.toList()));
+                    return postsDto;
+                }).collect(Collectors.toList());
     }
 
-    public PostsLikeDto increaseLike(Long id, String userId) {
+    public long increaseLike(Long id, String userId) {
         return postsLikeService.increaseLike(id, userId);
     }
 
-    public PostsLikeDto decreaseLike(Long id, String userId) {
+    public long decreaseLike(Long id, String userId) {
         return postsLikeService.decreaseLike(id, userId);
     }
 
-    public PostsLikeDto getLikes(Long id) {
+    public long getLikes(Long id) {
         return postsLikeService.getLikes(id);
     }
 
     public List<PostsCommentDto> getPostsComments(List<Long> postsIds, int page, int rowNum) {
         List<PostsComment> postsComments = postsCommentService.getPostsComments(postsIds, page, rowNum);
-
         List<PostsCommentDto> postsCommentDtos = postsComments.stream().map(postsComment -> {
             return new PostsCommentDto(
                     postsComment.getPosts().getId(),
@@ -147,9 +177,13 @@ public class PostsService {
      * @param commentId 댓글 ID
      * @return 삭제된 댓글 ID
      */
-    public Long deleteComment(Long commentId) {
+    public PostsComment deleteComment(Long commentId) {
+        Optional<PostsComment> postsComment =  postsCommentService.getPostsComment(commentId);
+        if(postsComment.isEmpty()) {
+            throw new IllegalStateException("Posts Comment empty");
+        }
         postsCommentService.deleteComment(commentId);
-        return commentId;
+        return postsComment.get();
     }
 
 }

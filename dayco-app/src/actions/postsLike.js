@@ -1,34 +1,19 @@
 import * as types from '../constants/types';
 import * as API from '../services/http';
 
-export function getPostsLikeAddCount(id) {
-  return dispatch => {
-    return API.getPostsLikeCount(id)
-               .then(async(response) => {
-      dispatch({
-        type: types.postsLikeCount.ADD_SUCESS,
-        like: response.data
-      })
-    }).catch(function (error) {
-      dispatch({
-        type: types.postsLikeCount.ADD_FAIL
-      })
-    })
-  }
-}
 
 export function increaseLikeCount(id) {
   return dispatch => {
     return API.increaseLikeCount(id)
                .then(async(response) => {
       dispatch({
-        type: types.postsLikeCount.INCREASE_SUCCESS,
+        type: types.posts.LIKE_INCREASE_SUCCESS,
         id: response.data.id,
         likeCount: response.data.likeCount
       });
     }).catch(function (error) {
       dispatch({
-        type: types.postsLikeCount.INCREASE_FAIL
+        type: types.posts.INCREASE_FAIL
       })
     })
   }
@@ -37,33 +22,9 @@ export function increaseLikeCount(id) {
 export function dispatchPostsIncreaseLikeSuccess(id, likeCount) {
   return dispatch => {
     dispatch({
-      type: types.postsLikeCount.INCREASE_SUCCESS,
+      type: types.posts.LIKE_INCREASE_SUCCESS,
       id: id,
-      likeCount: likeCount
-    })
-  }
-}
-
-export function dispatchBeforeIncreaseLike() {
-  return dispatch => {
-    dispatch({
-      type: types.actionStatus.SOCKET_POST_LIKE_INCREASE
-    })
-  }
-}
-
-export function dispatchBeforeDecreaseLike() {
-  return dispatch => {
-    dispatch({
-      type: types.actionStatus.SOCKET_POST_LIKE_DECREASE
-    })
-  }
-}
-
-export function dispatchBeforeGetLike() {
-  return dispatch => {
-    dispatch({
-      type: types.actionStatus.SOCKET_POST_LIKE_GET
+      likeCount: likeCount 
     })
   }
 }

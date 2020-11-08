@@ -3,10 +3,11 @@ import { Form, Button,  Modal } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { createPosts, editPosts, deletePosts, 
-    dispatchBeforeCreatePosts, dispatchBeforeEditPosts, dispatchBeforeDelPosts,
     hidePostsEditModal } from '../../actions/posts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSmileBeam, faSms } from '@fortawesome/free-solid-svg-icons'
+import { POSTS_CREATED, POSTS_DELETED, POSTS_EDITED,
+    POSTS_CREATE_MODAL, POSTS_EDIT_MODAL, POSTS_DELETE_MODAL } from "../../constants";
 import Cookies from "js-cookie";
 
 class PostsEditModal extends Component {
@@ -19,7 +20,7 @@ class PostsEditModal extends Component {
             requestContent: ''
         }
         this.requestTitleChange = this.requestTitleChange.bind(this);
-		    this.requestContentChange = this.requestContentChange.bind(this);
+        this.requestContentChange = this.requestContentChange.bind(this);
     }
 
     hideModal() {
@@ -36,13 +37,11 @@ class PostsEditModal extends Component {
 
     createPosts = () => {
         if(this.props.isSocket === true) {
-            this.props.dispatchBeforeCreatePosts();
-            let jsonStr = JSON.stringify({
-                type: "create", 
-                title: this.state.requestTitle, 
-                content: this.state.requestContent
-            })
-            this.sendMessage("/app/posts", jsonStr);
+            this.sendMessage("/app/posts",
+                JSON.stringify({
+                    status: POSTS_CREATED, 
+                    title: this.state.requestTitle, 
+                    content: this.state.requestContent}));
             this.props.hidePostsEditModal();
         } else {
             this.props.createPosts(this.state.requestTitle, this.state.requestContent);
@@ -51,28 +50,26 @@ class PostsEditModal extends Component {
 
     editPosts = () => {
         if(this.props.isSocket === true) {
-            this.props.dispatchBeforeEditPosts();
-            let jsonStr = JSON.stringify({
-                type: "edit", 
-                postsId: this.props.id,
+            this.sendMessage("/app/posts", JSON.stringify({
+                status: POSTS_EDITED, 
+                id: this.props.id, 
                 title: this.state.requestTitle, 
-                content: this.state.requestContent
-            })
-            this.sendMessage("/app/posts", jsonStr);
-            this.props.hidePostsEditModal();
+                content: this.state.requestContent}));
+            this.props.hidePostsEditModal(); 
         } else {
-            this.props.editPosts(this.props.id, this.state.requestTitle, this.state.requestContent, this.props.author)
+            this.props.editPosts(this.props.id, 
+                this.state.requestTitle, 
+                this.state.requestContent, 
+                this.props.author)
         }
     }
 
     deletePosts = () => {
         if(this.props.isSocket === true) {
-            this.props.dispatchBeforeDelPosts();
-            let jsonStr = JSON.stringify({
-                type: "delete", 
-                postsId: this.props.id
-            })
-            this.sendMessage("/app/posts", jsonStr);
+            this.sendMessage("/app/posts", JSON.stringify({
+                status: POSTS_DELETED, 
+                id: this.props.id
+            }));
             this.props.hidePostsEditModal();
         } else {
             this.props.deletePosts(this.props.id, this.props.author);
@@ -100,22 +97,30 @@ class PostsEditModal extends Component {
                             <Form.Label>Posts  </Form.Label>
                             <Form.Text>
                             {
-                            (this.props.status === 'delete') ?
+                            (this.props.status === POSTS_DELETE_MODAL) ?
                             (this.props.title + ' 삭제처리 하시겠습니까?') : ('')
                             }
                             </Form.Text>
                             </Modal.Title>
                             </Modal.Header>
                             {
-                            (this.props.status !== 'delete') ?
+                            (this.props.status !== POSTS_DELETE_MODAL) ?
                             <Modal.Body>
-                                <Form.Control type="text" name="requestTitle" id="requestTitle"
+                                <Form.Control type="text" 
+                                    name="requestTitle" id="requestTitle"
                                     onChange={this.requestTitleChange}
-                                    placeholder={(this.props.status === 'edit') ? (this.props.title) : ("제목을 입력하세요.")} />
+                                    placeholder={
+                                    (this.props.status === POSTS_EDIT_MODAL) ? 
+                                        (this.props.title) : ("제목을 입력하세요.")
+                                     } />
                                 <Form.Label>내용</Form.Label>
-                                <Form.Control as="textarea" rows="3" name="requestContent" id="requestContent"
+                                <Form.Control as="textarea" rows="3" 
+                                    name="requestContent" id="requestContent"
                                     onChange={this.requestContentChange} 
-                                    placeholder={(this.props.status === 'edit') ? (this.props.content) : ("")}/>
+                                    placeholder={
+                                    (this.props.status === POSTS_EDIT_MODAL) ? 
+                                        (this.props.content) : ("")
+                                    }/>
                             </Modal.Body>
                             : ('')
                             }
@@ -124,21 +129,21 @@ class PostsEditModal extends Component {
                                 Close
                             </Button>
                             {
-                            (this.props.status === 'create') ? 
+                            (this.props.status === POSTS_CREATE_MODAL) ? 
                             (<Button variant="primary" onClick={this.createPosts}>
                                 등록 <FontAwesomeIcon icon={faSms} />
                             </Button>)
                             :('')
                             }
                             {
-                            (this.props.status === 'edit') ?
+                            (this.props.status === POSTS_EDIT_MODAL) ?
                             (<Button variant="warning" onClick={this.editPosts}>
                                 수정 <FontAwesomeIcon icon={faSmileBeam} />
                             </Button>)
                             : ('')
                             }
                             {
-                            (this.props.status === 'delete') ?
+                            (this.props.status === POSTS_DELETE_MODAL) ?
                             (<Button variant="outline-dark" onClick={this.deletePosts}>
                                 삭제 <FontAwesomeIcon icon={faSmileBeam} />
                             </Button>)
@@ -167,5 +172,4 @@ const mapStateToProps = (state) => {
 }
 
 export default withRouter(connect(mapStateToProps, {createPosts, editPosts, deletePosts,
-    dispatchBeforeCreatePosts, dispatchBeforeEditPosts, dispatchBeforeDelPosts,
     hidePostsEditModal})(PostsEditModal));

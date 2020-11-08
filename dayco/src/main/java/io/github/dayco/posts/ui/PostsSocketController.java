@@ -1,7 +1,5 @@
 package io.github.dayco.posts.ui;
 
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +12,9 @@ import org.springframework.stereotype.Controller;
 import io.github.dayco.external.ui.UserClient;
 import io.github.dayco.external.ui.vo.User;
 import io.github.dayco.posts.application.PostsService;
-import io.github.dayco.posts.domain.Posts;
 import io.github.dayco.posts.ui.dto.PostsLikeDto;
-import io.github.dayco.posts.ui.dto.PostsLikeMessage;
-import io.github.dayco.posts.ui.dto.PostsMessage;
-import io.github.dayco.posts.ui.dto.PostsSaveRequestDto;
-import io.github.dayco.posts.ui.dto.PostsUpdateRequestDto;
+import io.github.dayco.posts.ui.dto.PostsLikeMessageDto;
+import io.github.dayco.posts.ui.dto.PostsMessageDto;
 
 @Controller
 public class PostsSocketController {
@@ -29,6 +24,14 @@ public class PostsSocketController {
 
     private final PostsService postsService;
     private final MessageSourceAccessor messageSourceAccessor;
+
+    private static final String POSTS_CREATED = "create";
+    private static final String POSTS_EDITED = "edit";
+    private static final String POSTS_DELETED = "delete";
+
+    private static final String POSTS_LIKE_GETED = "likeGet";
+    private static final String POSTS_LIKE_INCREASED = "likeIncrease";
+    private static final String POSTS_LIKE_DECREASED = "likeDecrease";
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -40,46 +43,41 @@ public class PostsSocketController {
 
     @MessageMapping("/posts")
     @SendTo("/topic/posts")
-    public Posts message(PostsMessage postsMessage,
-                         @Header("Authorization") String authorizationHeader) {
+    public PostsMessageDto message(PostsMessageDto postsMessageDto,
+                            @Header("Authorization") String authorizationHeader) {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
         }
-        postsMessage.setSender(user.getUserId());
+        if(postsMessageDto == null) {
+            throw new IllegalArgumentException("Posts Message doesn't Exist");
+        }
 
-        if(postsMessage == null) {
-            throw new IllegalArgumentException("PostMessage doesn't Exist");
+        switch (postsMessageDto.getStatus()) {
+            case POSTS_CREATED:
+                return new PostsMessageDto(
+                    postsService.save(postsMessageDto.getTitle(),
+                                      postsMessageDto.getContent(),
+                                      user.getUserId()), POSTS_CREATED);
+            case POSTS_EDITED:
+                return new PostsMessageDto(
+                    postsService.update(postsMessageDto.getId(),
+                                        postsMessageDto.getTitle(),
+                                        postsMessageDto.getContent()), POSTS_EDITED);
+            case POSTS_DELETED:
+                postsService.delete(postsMessageDto.getId());
+                PostsMessageDto postMessage = new PostsMessageDto();
+                postMessage.setId(postsMessageDto.getId());
+                postMessage.setAuthor(postsMessageDto.getAuthor());
+                return postsMessageDto;
+            default:
+                throw new IllegalArgumentException("Posts Message Status Code = "  + postsMessageDto.getStatus());
         }
-        Posts posts = null;
-        switch (postsMessage.getType()) {
-            case "create":
-                //String title, String content, String author
-                posts = postsService.save(new PostsSaveRequestDto(
-                        postsMessage.getTitle(),
-                        postsMessage.getContent(),
-                        postsMessage.getSender()));
-                break;
-            case "edit":
-                posts = postsService.update(postsMessage.getPostsId(),
-                                    new PostsUpdateRequestDto(postsMessage.getTitle(),
-                                                              postsMessage.getContent(),
-                                                              postsMessage.getSender()));
-                break;
-            case "delete":
-                postsService.delete(postsMessage.getPostsId());
-                posts = new Posts();
-                posts.setId(postsMessage.getPostsId());
-                posts.setAuthor(postsMessage.getSender());
-                break;
-        }
-        return posts;
     }
-
 
     @MessageMapping("/posts/like")
     @SendTo("/topic/posts/like")
-    public PostsLikeDto increaseLikeMessage(PostsLikeMessage postsLikeMessage,
+    public PostsLikeMessageDto increaseLikeMessage(PostsLikeMessageDto postsLikeMessage,
                                             @Header("Authorization") String authorizationHeader) {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
@@ -89,21 +87,26 @@ public class PostsSocketController {
         if(postsLikeMessage == null) {
             throw new IllegalArgumentException("PostsLikeMessage doesn't Exist");
         }
-        System.out.println("increaseLikeMessage Posts ID:: " + postsLikeMessage.getPostsId());
-        PostsLikeDto postsLikeDto = null;
-        switch (postsLikeMessage.getType()) {
-            case "increase":
-                postsLikeDto = postsService.increaseLike(postsLikeMessage.getPostsId(),
-                                                         user.getUserId());
-                break;
-            case "decrease":
-                postsLikeDto = postsService.decreaseLike(postsLikeMessage.getPostsId(),
-                                                         user.getUserId());
-                break;
+        switch (postsLikeMessage.getStatus()) {
+            case POSTS_LIKE_GETED:
+                return new PostsLikeMessageDto(postsLikeMessage.getId(),
+                                               user.getUserId(),
+                                               postsService.getLikes(postsLikeMessage.getId()),
+                                               POSTS_LIKE_GETED);
+            case POSTS_LIKE_INCREASED:
+                return new PostsLikeMessageDto(postsLikeMessage.getId(),
+                                               user.getUserId(),
+                                               postsService.increaseLike(postsLikeMessage.getId(),
+                                                                         user.getUserId()),
+                                               POSTS_LIKE_INCREASED);
+            case POSTS_LIKE_DECREASED:
+                return new PostsLikeMessageDto(postsLikeMessage.getId(),
+                                               user.getUserId(),
+                                               postsService.decreaseLike(postsLikeMessage.getId(),
+                                                                         user.getUserId()),
+                                               POSTS_LIKE_DECREASED);
             default:
-                postsLikeDto = postsService.getLikes(postsLikeMessage.getPostsId());
-                break;
+                throw new IllegalArgumentException("PostsLike Message Type Status = "  + postsLikeMessage.getStatus());
         }
-        return postsLikeDto;
     }
 }

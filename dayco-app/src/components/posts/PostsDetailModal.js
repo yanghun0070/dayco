@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Modal, Row, Col, Button} from 'react-bootstrap';
-import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
+import { faAngleRight, faAngleLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
@@ -8,7 +8,7 @@ import Posts from '../posts/Posts';
 import PostsComments from '../posts/PostsComments';
 import question from '../img/the-question-mark.png';
 import { dispatchHidePostsDetailModal } from '../../actions/posts';
-import { getNextPageOfComments } from '../../actions/postsComment';
+import { getPageOfComments } from '../../actions/postsComment';
 
 class PostsDetailModal extends Component {
 
@@ -17,11 +17,27 @@ class PostsDetailModal extends Component {
     };
 
     getNextPageOfComments = () => {
-        this.props.getNextPageOfComments(
-            this.props.posts.id, this.props.postsCommentPage, this.props.postsCommentRowNum);
+        this.props.getPageOfComments(
+            this.props.posts.id, 
+            this.props.posts.pageOfComments.number + 1, 
+            this.props.posts.pageOfComments.size
+            );
+    }
+
+    getPrevPageOfComments = () => {
+        if(this.props.posts.pageOfComments.number == 0) {
+            alert("현재 페이지가 처음페이지 입니다.")
+            return true;
+        }
+        this.props.getPageOfComments(
+            this.props.posts.id, 
+            this.props.posts.pageOfComments.number - 1, 
+            this.props.posts.pageOfComments.size
+            );
     }
 
     render(){
+        console.log(this.props.posts)
         return (
             <div>
                 <Modal size="xl" show={this.props.isShow}
@@ -42,7 +58,8 @@ class PostsDetailModal extends Component {
                                             title={this.props.posts.title}
                                             content={this.props.posts.content}
                                             thumbnail={question}
-                                            likeCount={this.props.postsLike.likeCount}
+                                            likeCount={(this.props.posts.postsLike) ? 
+                                                this.props.posts.postsLike.likeCount : 0 }
                                             modifiedDate={this.props.posts.modifiedDate}
                                             clientRef={this.props.clientRef}/>
                                     </Form.Group>
@@ -51,13 +68,29 @@ class PostsDetailModal extends Component {
                                     <Form.Group>
                                         <PostsComments 
                                             postsId={this.props.posts.id} 
-                                            postsComments={this.props.postsComments}/>
-                                        <Button variant="warning" 
-                                            size="lg"  
-                                            onClick={() => {this.getNextPageOfComments()}}
-                                            block>
-                                            <FontAwesomeIcon icon={faAngleDown}  /> 더보기
-                                        </Button>
+                                            postsComments={(this.props.posts.postsComments) ? 
+                                            this.props.posts.postsComments: []}/>
+
+                                        <Row>
+                                            <Col>
+                                                <Button 
+                                                    style={{float: "right"}}
+                                                    variant="warning" 
+                                                    size="sm"  
+                                                    onClick={() => {this.getPrevPageOfComments()}}>
+                                                    <FontAwesomeIcon icon={faAngleLeft}  />  Prev
+                                                </Button>
+                                            </Col>
+                                            <Col>
+                                            <Button 
+                                                    style={{float: "left"}}
+                                                    variant="warning" 
+                                                    size="sm"  
+                                                    onClick={() => {this.getNextPageOfComments()}}>
+                                                    Next <FontAwesomeIcon icon={faAngleRight}  /> 
+                                                </Button>
+                                            </Col>
+                                        </Row>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -73,14 +106,10 @@ const mapStateToProps = (state) => {
 	return {
         user : state.user,
         isShow : state.postsDetailModal.isShow,
-        posts : state.posts.detail,
-        postsComments : state.postsComment.detail.comments,
-        postsCommentPage : state.postsComment.detail.page,
-        postsCommentRowNum : state.postsComment.detail.rowNum,
-        postsLike : state.postsEtc.detail
+        posts : state.posts.detail
 	};
 }
 
 export default withRouter(connect(mapStateToProps, {dispatchHidePostsDetailModal,
-    getNextPageOfComments})(PostsDetailModal));
+    getPageOfComments})(PostsDetailModal));
  

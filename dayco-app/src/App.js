@@ -11,11 +11,9 @@ import OAuth2RedirectHandler from './components/user/oauth/OAuth2RedirectHandler
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { getCurrentUser } from './actions/user';
-import {  dispatchCreatePostsSuccess, dispatchCreatePostsFail, 
-  dispatchEditPostsSuccess, dispatchEditPostsFail,
-  dispatchDeletePostsSuccess } from './actions/posts';
+import {  dispatchCreatePostsSuccess, dispatchEditPostsSuccess, dispatchDeletePostsSuccess } from './actions/posts';
 import { dispatchPostsIncreaseLikeSuccess } from './actions/postsLike';
-import { API_BASE_URL } from './constants';
+import { API_BASE_URL, POSTS_CREATED, POSTS_EDITED, POSTS_DELETED, POSTS_LIKE_INCREASED } from './constants';
 import SockJsClient from 'react-stomp';
 import Cookies from "js-cookie";
 import { connect } from 'react-redux';
@@ -50,13 +48,13 @@ class App extends Component {
           //message 보냈을 때의 callback
           onMessage={(msg) => {
             console.log(msg)
-            if(this.props.socketActionStatus === 'postsCreate') {
+            if(msg.status === POSTS_CREATED) {
                 this.props.dispatchCreatePostsSuccess(msg);
-            } else if(this.props.socketActionStatus === 'postsEdit') {
+            } else if(msg.status === POSTS_EDITED) {
                 this.props.dispatchEditPostsSuccess(msg);
-            } else if(this.props.socketActionStatus === 'postsDelete') {
+            } else if(msg.status === POSTS_DELETED) {
                 this.props.dispatchDeletePostsSuccess(msg.id, msg.author);
-            } else if(this.props.socketActionStatus == 'postsLikeIncrease') {
+            } else if(msg.status == POSTS_LIKE_INCREASED) {
               this.props.dispatchPostsIncreaseLikeSuccess(msg.id, msg.likeCount)
             }
           }}
@@ -72,7 +70,8 @@ class App extends Component {
           <Switch>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp}/>
-            <Route path="/profile" render={() => <Profile email={(this.props.user.currentUser) ? this.props.user.currentUser.email : ''}/> } />
+            <Route path="/profile" render={() => <Profile 
+            email={(this.props.user.currentUser) ? this.props.user.currentUser.email : ''}/> } />
             <Route path="/home" component={() => <PostsList clientRef={this.clientRef} />} />
             <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}/>
           </Switch>
@@ -85,8 +84,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-    user: state.user,
-    socketActionStatus: state.socket.actionStatus,
+    user: state.user
 	};
 }
 export default connect(mapStateToProps, {getCurrentUser,
