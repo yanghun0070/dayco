@@ -1,5 +1,6 @@
 server:
   port: 9999
+  hostname: http://localhost:9999
   error:
     whitelabel:
       enabled: false
