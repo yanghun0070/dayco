@@ -2,14 +2,15 @@ package io.github.dayco.uaa.user.ui;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Base64;
 import java.util.Optional;
 
 import javax.swing.filechooser.FileSystemView;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,9 @@ import io.github.dayco.uaa.user.ui.dto.ProfileDto;
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
+
+    @Value("${server.hostname}")
+    private String hostName;
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -56,6 +60,10 @@ public class ProfileController {
                 fileOutputStream.write(decodedBytes);
             }
         }
-        return profileService.change(profileDto.getEmail(), profileDto.getPassword(), Optional.of(fileSavedPath));
+
+        return profileService.change(profileDto.getEmail(), profileDto.getPassword(),
+                                     (StringUtils.isNotEmpty(fileSavedPath)) ?
+                                     Optional.of(hostName + File.pathSeparator + fileSavedPath) :
+                                     Optional.empty());
     }
 }

@@ -60,10 +60,7 @@ public class UserControllerTest {
                                      .header("Authorization", authorizationHeader))
                     .andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.userId").value("username"))
-                    .andExpect(jsonPath("$.password").isNotEmpty())
-                    .andExpect(jsonPath("$.userAuthorizations").isArray())
-                    .andExpect(jsonPath("$.userAuthorizations[0].roleName").value("USER"));
+                    .andExpect(jsonPath("$.userId").value("username"));
     }
 
     @Test
