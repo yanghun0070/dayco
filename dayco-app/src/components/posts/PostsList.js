@@ -23,7 +23,7 @@ class PostsList extends Component {
                 key={posts.id}
                 id={posts.id}
                 title={posts.title} 
-                thumbnail={question}
+                thumbnail={(posts.fileSavedUrl) ? posts.fileSavedUrl: question}
                 author={posts.author}
                 content={posts.content}
                 modifiedDate={posts.modifiedDate}

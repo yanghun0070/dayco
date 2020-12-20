@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.dayco.uaa.auth.config.CurrentUser;
+import io.github.dayco.uaa.user.application.ProfileService;
 import io.github.dayco.uaa.user.application.UserService;
 import io.github.dayco.uaa.user.domain.User;
 import io.github.dayco.uaa.user.ui.dto.UserDto;
@@ -23,14 +24,22 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
+    private final ProfileService profileService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          ProfileService profileService) {
         this.userService = userService;
+        this.profileService = profileService;
     }
 
     @GetMapping("{userId}")
-    public Optional<UserDto> getUser(@PathVariable String userId) {
+    public Optional<UserDto> getUser(@PathVariable String userId) throws Exception {
         Optional<User> userOpt = userService.findByUserId(userId);
+        /**
+         * 유저 정보를 얻어 올 때, Expire 시간이 7 일이므로, Profile URL 을 갱신시킨다.
+         * @todo 추후에 Redis 로 7일 지나기 전에 Profile URL 변경시키는 형태로 변경
+         */
+        profileService.changeProfileUrl(userId);
         return userOpt.map(
                 user ->
                 {
@@ -49,8 +58,13 @@ public class UserController {
 
     @GetMapping("me")
     @PreAuthorize("hasRole('USER')")
-    public UserDto getCurrentUser(@CurrentUser User user) {
+    public UserDto getCurrentUser(@CurrentUser User user) throws Exception {
         Optional<User> userOpt = userService.findByUserId(user.getUserId());
+        /**
+         * 유저 정보를 얻어 올 때, Expire 시간이 7 일이므로, Profile URL 을 갱신시킨다.
+         * @todo 추후에 Redis 로 7일 지나기 전에 Profile URL 변경시키는 형태로 변경
+         */
+        profileService.changeProfileUrl(userOpt, user.getUserId());
         return userOpt.map(u ->
                 {
                     return UserDto.builder()

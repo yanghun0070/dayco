@@ -22,7 +22,7 @@ public class UaaUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = this.userJpaRepository.findByUserId(username).orElseThrow(
-                () -> new UsernameNotFoundException("Username: " + username + " not found"));
+                () ->   new UsernameNotFoundException("Username: " + username + " not found"));
          org.springframework.security.core.userdetails.User.withUsername(user.getUserId())
                    .password(user.getPassword())
                    .roles(

@@ -20,6 +20,7 @@ dependencies {
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '1.2.2.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '2.2.6.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.2.6.RELEASE'
+	compile group: 'io.minio', name: 'minio', version: '8.0.3'
 
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

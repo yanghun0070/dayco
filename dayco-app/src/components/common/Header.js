@@ -48,8 +48,7 @@ class Header extends Component {
                     <Navbar.Brand href="#" onClick={this.onLogout}>
                         {this.props.user.currentUser.picture ? (
                                             <Image 
-                                            // src={require(this.props.user.currentUser.picture)} 
-                                            style={{ backgroundImage: `url(${this.props.user.currentUser.picture})`}}     
+                                            src={this.props.user.currentUser.picture} 
                                             alt={this.props.user.currentUser.name}
                                             width={26} height={26}
                                             roundedCircle

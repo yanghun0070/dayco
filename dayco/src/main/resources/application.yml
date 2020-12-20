@@ -1,6 +1,12 @@
 server:
   port: 8080
 
+file:
+  upload:
+    url: http://localhost:9000
+    accessKey: AKIAIOSFODNN7EXAMPLE
+    secretKey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
 spring:
   application:
     name: ${rootProject.name}

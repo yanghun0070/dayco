@@ -44,7 +44,7 @@ public class PostsSocketController {
     @MessageMapping("/posts")
     @SendTo("/topic/posts")
     public PostsMessageDto message(PostsMessageDto postsMessageDto,
-                            @Header("Authorization") String authorizationHeader) {
+                            @Header("Authorization") String authorizationHeader) throws Exception {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
@@ -56,14 +56,19 @@ public class PostsSocketController {
         switch (postsMessageDto.getStatus()) {
             case POSTS_CREATED:
                 return new PostsMessageDto(
-                    postsService.save(postsMessageDto.getTitle(),
-                                      postsMessageDto.getContent(),
-                                      user.getUserId()), POSTS_CREATED);
+                    postsService.save(
+                            postsMessageDto.getTitle(),
+                            postsMessageDto.getContent(),
+                            user.getUserId(),
+                            postsMessageDto.getFileName(),
+                            postsMessageDto.getFileBase64()), POSTS_CREATED);
             case POSTS_EDITED:
                 return new PostsMessageDto(
                     postsService.update(postsMessageDto.getId(),
                                         postsMessageDto.getTitle(),
-                                        postsMessageDto.getContent()), POSTS_EDITED);
+                                        postsMessageDto.getContent(),
+                                        postsMessageDto.getFileName(),
+                                        postsMessageDto.getFileBase64()), POSTS_EDITED);
             case POSTS_DELETED:
                 postsService.delete(postsMessageDto.getId());
                 PostsMessageDto postMessage = new PostsMessageDto();

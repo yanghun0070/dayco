@@ -16,6 +16,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -149,6 +150,15 @@ public class ExceptionControllerAdvice {
         GlobalMessage message = new GlobalMessage();
         message.setMessage(messageSourceAccessor.getMessage("auth.error"));
         message.setStatus(HttpStatus.UNAUTHORIZED.value());
+        return responseErrorMessage(request, message);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public Object typeMismatchExceptionHandler(UsernameNotFoundException exception, HttpServletRequest request,
+                                               Locale locale) {
+        GlobalMessage message = new GlobalMessage();
+        message.setStatus(HttpStatus.BAD_REQUEST.value());
+        message.setMessage(messageSourceAccessor.getMessage(String.valueOf(HttpStatus.BAD_REQUEST.value())));
         return responseErrorMessage(request, message);
     }
 
