@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Form, Button,  Modal } from 'react-bootstrap';
+import { Form, Button,  Modal, Card } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { withRouter } from "react-router";
 import { createPosts, editPosts, deletePosts, 
     hidePostsEditModal } from '../../actions/posts';
+import question from '../img/the-question-mark.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSmileBeam, faSms } from '@fortawesome/free-solid-svg-icons'
 import { POSTS_CREATED, POSTS_DELETED, POSTS_EDITED,
@@ -17,12 +18,17 @@ class PostsEditModal extends Component {
         this.state = {
             requestId: -1,
             requestTitle: '',
-            requestContent: ''
+            requestContent: '',
+            requestFileBase64: '',
+            requestFileName: ''
         }
+        this.imageUploader = React.createRef()
+        this.uploadedImage = React.createRef()
+
         this.requestTitleChange = this.requestTitleChange.bind(this);
         this.requestContentChange = this.requestContentChange.bind(this);
     }
-
+    
     hideModal() {
         this.props.hidePostsEditModal();
     }
@@ -35,16 +41,45 @@ class PostsEditModal extends Component {
 		this.setState({requestContent: event.target.value});
     }
 
+    handleImageUpload = e => {
+        const [file] = e.target.files;
+        if (file) {
+            const originalFileName = file.name
+            const reader = new FileReader();
+            const { current } = this.uploadedImage;
+            current.file = file;
+            reader.onload = e => {
+                current.src = e.target.result;
+                const dataIndex = current.src.indexOf(',') + 1
+                const fileBase64 = current.src.substring(
+                            dataIndex,
+                            current.src.length)
+                this.setState({
+                    requestFileBase64: fileBase64,
+                    requestFileName: originalFileName
+                })
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     createPosts = () => {
         if(this.props.isSocket === true) {
             this.sendMessage("/app/posts",
                 JSON.stringify({
                     status: POSTS_CREATED, 
                     title: this.state.requestTitle, 
-                    content: this.state.requestContent}));
+                    content: this.state.requestContent,                
+                    fileBase64 :this.state.requestFileBase64,
+                    fileName : this.state.requestFileName
+                }));
             this.props.hidePostsEditModal();
         } else {
-            this.props.createPosts(this.state.requestTitle, this.state.requestContent);
+            this.props.createPosts(this.state.requestTitle, 
+                this.state.requestContent,
+                this.state.requestFileBase64,
+                this.state.requestFileName
+                );
         }
     }
 
@@ -54,13 +89,19 @@ class PostsEditModal extends Component {
                 status: POSTS_EDITED, 
                 id: this.props.id, 
                 title: this.state.requestTitle, 
-                content: this.state.requestContent}));
+                content: this.state.requestContent,
+                fileBase64 :this.state.requestFileBase64,
+                fileName : this.state.requestFileName
+            }));
             this.props.hidePostsEditModal(); 
         } else {
             this.props.editPosts(this.props.id, 
                 this.state.requestTitle, 
                 this.state.requestContent, 
-                this.props.author)
+                this.props.author,
+                this.state.requestFileBase64,
+                this.state.requestFileName
+            )
         }
     }
 
@@ -106,6 +147,29 @@ class PostsEditModal extends Component {
                             {
                             (this.props.status !== POSTS_DELETE_MODAL) ?
                             <Modal.Body>
+                                <Form.Group  controlId="formImage">
+                                <Form.Control
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={this.handleImageUpload}
+                                            ref={this.imageUploader}
+                                            style={{display: "none"}}/>
+                                        <div
+                                            style={{
+                                            border: "1px dashed black"}}
+                                            onClick={() => this.imageUploader.current.click()}>
+                                            <Card.Img
+                                                variant="top" 
+                                                ref={this.uploadedImage}
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    position: "acsolute"
+                                                }}
+                                                src={question}/>
+                                        </div>
+                                        이미지를 Upload 하세요.
+                                </Form.Group>
                                 <Form.Control type="text" 
                                     name="requestTitle" id="requestTitle"
                                     onChange={this.requestTitleChange}

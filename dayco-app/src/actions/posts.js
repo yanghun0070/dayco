@@ -147,9 +147,9 @@ export function dispatchDeletePostsFail() {
     }
 }
 
-export function createPosts(title, content) {
+export function createPosts(title, content, fileBase64, fileName) {
     return dispatch => {
-        return API.createPosts(title, content)
+        return API.createPosts(title, content, fileBase64, fileName)
         .then(async(response) => {
             dispatch(Alert.createAlert({
                 variant : 'success', 
@@ -167,9 +167,9 @@ export function createPosts(title, content) {
     }
 }
 
-export function editPosts(id, title, content, author) {
+export function editPosts(id, title, content, author, fileBase64, fileName) {
     return dispatch => {
-        return API.editPosts(id, title, content, author)
+        return API.editPosts(id, title, content, author, fileBase64, fileName)
             .then(async(response) => {
                 dispatch(editPostsSuccess(response.data));
             dispatch(Alert.createAlert({

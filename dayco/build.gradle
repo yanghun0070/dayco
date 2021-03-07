@@ -23,6 +23,7 @@ dependencies {
 	compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.4.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.3.3.RELEASE'
 	compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '2.3.4.RELEASE'
+	compile group: 'io.minio', name: 'minio', version: '8.0.3'
 
 	compile group: 'org.springframework.plugin', name: 'spring-plugin-core', version: '2.0.0.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter'

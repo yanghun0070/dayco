@@ -8,7 +8,7 @@ export function changeProfile(email, pw, fileBase64, fileName) {
                  .then(async(response) => {
                     dispatch(Alert.createAlert({
                         variant : 'success', 
-                        message : ' 프로필 수정 성공하였습니다.'
+                        message : '프로필 수정 되셨습니다.'
                     }));
             }).catch(function (error) {
                 dispatch(Alert.createAlert({

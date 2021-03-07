@@ -3,6 +3,7 @@ package io.github.dayco.posts.infra;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ public class PostsCommentJpaRepositoryTest {
     @BeforeEach
     public void init() throws Exception {
         Posts addPosts = postsJpaRepository.save(
-                new Posts("title", "content", "author"));
+                new Posts("title", "content", "author", Optional.empty()));
         postsCommentJpaRepository.save(new PostsComment(addPosts, "test", "author"));
     }
 

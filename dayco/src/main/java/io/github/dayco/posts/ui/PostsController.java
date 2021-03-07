@@ -4,8 +4,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.data.domain.Page;
@@ -32,7 +30,6 @@ import io.github.dayco.posts.domain.PostsComment;
 import io.github.dayco.posts.ui.dto.PostsCommentDto;
 import io.github.dayco.posts.ui.dto.PostsDto;
 import io.github.dayco.posts.ui.dto.PostsLikeDto;
-import io.github.dayco.posts.ui.dto.PostsResponseDto;
 
 @RestController
 @RequestMapping("/posts")
@@ -62,7 +59,7 @@ public class PostsController {
      */
     @PostMapping
     public Posts create(@ModelAttribute PostsDto postsDto,
-                        @RequestHeader(value = "Authorization") String authorizationHeader) {
+                        @RequestHeader(value = "Authorization") String authorizationHeader) throws Exception {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
@@ -81,7 +78,7 @@ public class PostsController {
     @PutMapping("/{id}")
     public Posts update(@PathVariable Long id,
                         @ModelAttribute PostsDto postsDto,
-                        @RequestHeader(value = "Authorization") String authorizationHeader) {
+                        @RequestHeader(value = "Authorization") String authorizationHeader) throws Exception {
         User user = userClient.getCurrentUser(authorizationHeader);
         if(user == null) {
             throw new IllegalArgumentException("User doesn't Exist");
@@ -90,7 +87,8 @@ public class PostsController {
         if(!postsDto.getAuthor().equals(user.getUserId())) {
             throw new IllegalArgumentException("Different from author and post modifier");
         }
-        return postsService.update(id, postsDto.getTitle(), postsDto.getContent());
+        return postsService.update(id, postsDto.getTitle(), postsDto.getContent(),
+                                   postsDto.getFileName(), postsDto.getFileBase64());
     }
 
     /**
@@ -119,7 +117,7 @@ public class PostsController {
     }
 
     @GetMapping("/all")
-    public List<PostsDto> all() {
+    public List<PostsDto> all() throws Exception {
         return postsService.findAll();
     }
 

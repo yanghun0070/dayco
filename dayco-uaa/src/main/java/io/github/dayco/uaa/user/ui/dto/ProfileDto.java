@@ -8,16 +8,16 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class ProfileDto {
-    private String email; //이메일
+    private Optional<String> email; //이메일
     private Optional<String> password; //비밀번호
     private Optional<String> fileBase64; //File Base64
     private Optional<String> fileName; //파일명
 
-    public String getEmail() {
+    public Optional<String> getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Optional<String> email) {
         this.email = email;
     }
 

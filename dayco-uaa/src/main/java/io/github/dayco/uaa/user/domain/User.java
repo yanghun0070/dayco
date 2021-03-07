@@ -50,8 +50,11 @@ public class User implements UserDetails {
     @Column
     private Integer gender;
 
-    @Column
+    @Column(length = 1000)
     private String picture;
+
+    @Column
+    private String profileFileName;
 
     @Column
     private LocalDateTime createTime;
@@ -96,16 +99,37 @@ public class User implements UserDetails {
         return this;
     }
 
-    public User update(String email, Optional<String> password, Optional<String> picture) {
+    public User update(
+            String userId,
+            Optional<String> email,
+            Optional<String> password,
+            Optional<String> profileFileName,
+            Optional<String> profileUrl) {
 
-        this.email = new Email(email);
-
+        this.userId = userId;
+        if(email.isPresent()) {
+            this.email = new Email(email.get());
+        }
         if(password.isPresent()) {
             this.password = new Password(password.get());
         }
-        if(picture.isPresent()) {
-            this.picture =  picture.get();
+        if(profileFileName.isPresent()) {
+            this.profileFileName = profileFileName.get();
         }
+        if(profileUrl.isPresent()) {
+            this.picture = profileUrl.get();
+            System.out.println(this.picture);
+        }
+        this.modifyTime = LocalDateTime.now();
+        return this;
+    }
+
+    public User profileUpdate(String userId, Optional<String> profileUrl) {
+        this.userId = userId;
+        if(profileUrl.isPresent()) {
+            this.picture =  profileUrl.get();
+        }
+        this.modifyTime = LocalDateTime.now();
         return this;
     }
 
