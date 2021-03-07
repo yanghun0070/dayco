@@ -22,6 +22,14 @@ spring:
     properties:
       hibernate:
         format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/daycodb?useSSL=false
+      username: daycouser
+      password: daycouser
 
 eureka:
   client:
