@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  mysql:
+    container_name: dayco-mysql
+    image: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - /Users/yanghun007/dayco/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_USER: daycouser
+      MYSQL_PASSWORD: daycouser

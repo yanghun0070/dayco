@@ -32,7 +32,7 @@ class Alerts extends Component {
                 offset: "500px",
                 position: "absolute",
                 width: "500px",
-                zIndex: 2,
+                zIndex: 9999,
                 left: "100%",
                 transform: "translate(-510px, 10px)"}}>
 				{alertHtml}
