@@ -20,11 +20,23 @@ spring:
             clientSecret:
             redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
             scope: user:email, read:user
+          kakao:
+            clientId:
+            clientSecret:
+            redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
+            scope: profile
+            authorizationGrantType: authorization_code
         provider:
           naver:
             authorizationUri: https://nid.naver.com/oauth2.0/authorize
             tokenUri: https://nid.naver.com/oauth2.0/token
             userInfoUri: https://openapi.naver.com/v1/nid/me
             userNameAttribute: response
+          kakao:
+            authorizationUri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            userInfoAuthenticationMethod: post
+            userNameAttribute: id
 
 

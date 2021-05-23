@@ -7,7 +7,8 @@ import { withRouter } from "react-router";
 import googleLogo from '../../img/google-logo.png';
 import githubLogo from '../../img/github-logo.png';
 import naverLogo from '../../img/naver-logo.png';
-import { GOOGLE_AUTH_URL, GITHUB_AUTH_URL, NAVER_AUTH_URL, TISTORY_AUTH_URL } from '../../../constants';
+import kakaoLogo from '../../img/kakao-logo.png';
+import { GOOGLE_AUTH_URL, GITHUB_AUTH_URL, NAVER_AUTH_URL, KAKAO_AUTH_URL } from '../../../constants';
 
 class Login extends Component {
 
@@ -92,6 +93,14 @@ class Login extends Component {
 											<Button size="sm" block variant="outline-info" href={NAVER_AUTH_URL}>
 												<Image src={naverLogo} alt="Naver" thumbnail width={26} height={26}/>
 												&nbsp;Log in with Naver</Button>
+										</Col>
+									</Form.Group>
+									<Form.Group as={Row}>
+										<Col sm="2"></Col>
+										<Col sm="8">
+											<Button size="sm" block variant="outline-info" href={KAKAO_AUTH_URL}>
+												<Image src={kakaoLogo} alt="Kakao" thumbnail width={26} height={26}/>
+												&nbsp;Log in with Kakao</Button>
 										</Col>
 									</Form.Group>
 								</Form>
