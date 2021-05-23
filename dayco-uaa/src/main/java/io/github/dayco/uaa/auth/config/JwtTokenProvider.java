@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import io.github.dayco.uaa.auth.exception.InvalidJwtAuthenticationException;
 
+import io.github.dayco.uaa.social.domain.SocialLogin;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -45,12 +46,16 @@ public class JwtTokenProvider {
     }
 
     public String createToken(DefaultOAuth2User oAuth2User, String registrationId) {
-        Map<String, Object> userAttributes =  oAuth2User.getAttributes();
+        Map<String, Object> userAttributes = oAuth2User.getAttributes();
 
         String subject = "";
-        if("github".equals(registrationId)) {
+        if (SocialLogin.GITHUB.equals(registrationId)) {
             subject = (String) userAttributes.get("login");
-        } else { //Google, Naver 는 ID 대신 이름으로 대체
+        } else if(SocialLogin.KAKAO.equals(registrationId)) {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) userAttributes.get("kakao_account");
+            Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+            subject = (String) profile.get("nickname");
+        }else { //Google, Naver 는 ID 대신 이름으로 대체
             subject = (String) userAttributes.get("name");
         }
         Date now = new Date();

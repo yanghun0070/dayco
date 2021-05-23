@@ -2,6 +2,7 @@ package io.github.dayco.uaa.auth.dto;
 
 import java.util.Map;
 
+import io.github.dayco.uaa.social.domain.SocialLogin;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -25,14 +26,16 @@ public class OAuthAttributes {
     }
 
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes) {
-        if("naver".equals(registrationId)) {
+        if(SocialLogin.NAVER.name().equals(registrationId)) {
             return ofNaver("id", attributes);
         }
         OAuthAttributes oAuthAttributes = null;
-        if("google".equals(registrationId)) {
+        if(SocialLogin.GOOGLE.name().equals(registrationId)) {
             oAuthAttributes = ofGoogle(userNameAttributeName, attributes);
-        } else if("github".equals(registrationId)) {
+        } else if(SocialLogin.GITHUB.name().equals(registrationId)) {
             oAuthAttributes = ofGithub(userNameAttributeName, attributes);
+        } else if(SocialLogin.KAKAO.name().equals(registrationId)) {
+            oAuthAttributes = ofKakao(userNameAttributeName, attributes);
         }
         return oAuthAttributes;
     }
@@ -63,6 +66,17 @@ public class OAuthAttributes {
                               .email((String) response.get("email"))
                               .picture((String) response.get("profile_image"))
                               .attributes(response)
+                              .nameAttributeKey(userNameAttributeName)
+                              .build();
+    }
+
+    private static OAuthAttributes ofKakao(String userNameAttributeName, Map<String, Object> attributes) {
+        Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        return OAuthAttributes.builder()
+                              .name((String) profile.get("nickname"))
+                              .picture((String) profile.get("thumbnail_image_url"))
+                              .attributes(attributes)
                               .nameAttributeKey(userNameAttributeName)
                               .build();
     }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import io.github.dayco.uaa.auth.dto.OAuthAttributes;
 import io.github.dayco.uaa.auth.dto.SessionUser;
 import io.github.dayco.uaa.manager.domain.UserAuthorization;
+import io.github.dayco.uaa.social.domain.SocialLogin;
 import io.github.dayco.uaa.user.domain.User;
 import io.github.dayco.uaa.user.infra.UserJpaRepository;
 
@@ -52,8 +53,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private User saveOrUpdate(String registrationId, OAuthAttributes attributes) {
         User user;
-        // Github 일 경우, Email 이 없다.
-        if("github".equals(registrationId)) {
+        // Github 또는 kakao 일 경우, Email 이 없다.
+        if(SocialLogin.GITHUB.equals(registrationId)
+           || SocialLogin.KAKAO.equals(registrationId)) {
             User changedUser = new User(attributes.getName(), "social", attributes.getPicture());
             changedUser.addUserAuthorization(new UserAuthorization(changedUser, "USER"));
             user = userJpaRepository.findByUserId(attributes.getName())
