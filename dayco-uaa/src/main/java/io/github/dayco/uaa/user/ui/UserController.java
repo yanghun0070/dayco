@@ -39,45 +39,37 @@ public class UserController {
          * 유저 정보를 얻어 올 때, Expire 시간이 7 일이므로, Profile URL 을 갱신시킨다.
          * @todo 추후에 Redis 로 7일 지나기 전에 Profile URL 변경시키는 형태로 변경
          */
-        profileService.changeProfileUrl(userId);
-        return userOpt.map(
-                user ->
-                {
-                    return UserDto.builder()
-                                  .userId(user.getUserId())
-                                  .email(user.getEmail().isEmpty() ? null: user.getEmail().get().getEmail())
-                                  .age(user.getAge().orElse(null))
-                                  .gender(user.getGender().orElse(null))
-                                  .picture(user.getPicture().orElse(null))
-                                  .createTime(user.getCreateTime())
-                                  .modifyTime(user.getModifyTime())
-                                  .build();
-                }
-        );
+        if(userOpt.isPresent()) {
+            profileService.changeImageUrl(userOpt.get().getProfile(), userId);
+        }
+        return (userOpt.isPresent()) ? Optional.of(modelToDto(userOpt.get())) : Optional.empty();
     }
 
     @GetMapping("me")
     @PreAuthorize("hasRole('USER')")
     public UserDto getCurrentUser(@CurrentUser User user) throws Exception {
-        Optional<User> userOpt = userService.findByUserId(user.getUserId());
+        User currentUser = userService.findByUserId(user.getUserId())
+                .orElseThrow(() -> new UsernameNotFoundException("Username " + user.getUserId() + " not found"));
+
         /**
          * 유저 정보를 얻어 올 때, Expire 시간이 7 일이므로, Profile URL 을 갱신시킨다.
          * @todo 추후에 Redis 로 7일 지나기 전에 Profile URL 변경시키는 형태로 변경
          */
-        profileService.changeProfileUrl(userOpt, user.getUserId());
-        return userOpt.map(u ->
-                {
-                    return UserDto.builder()
-                                  .userId(u.getUserId())
-                                  .email(u.getEmail().isEmpty() ? null: u.getEmail().get().getEmail())
-                                  .age(u.getAge().orElse(null))
-                                  .gender(u.getGender().orElse(null))
-                                  .picture(u.getPicture().orElse(null))
-                                  .createTime(u.getCreateTime())
-                                  .modifyTime(u.getModifyTime())
-                                  .build();
-                }
-        ).orElseThrow(() -> new UsernameNotFoundException("Username " + user.getUserId() + " not found"));
+        profileService.changeImageUrl(currentUser.getProfile(), user.getUserId());
+        return modelToDto(currentUser);
+    }
+
+    private UserDto modelToDto(User user) {
+        return UserDto.builder()
+                      .userId(user.getUserId())
+                      .email(user.getEmail().map(e -> e.getEmail()))
+                      .age(user.getAge())
+                      .gender(user.getGender())
+                      .profileImageUrl(user.getProfile().map(
+                              profile -> profile.getImageUrl()))
+                      .createTime(user.getCreateTime())
+                      .updateTime(user.getUpdateTime())
+                      .build();
     }
 }
 

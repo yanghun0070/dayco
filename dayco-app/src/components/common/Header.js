@@ -46,9 +46,9 @@ class Header extends Component {
                         </Navbar.Brand>
                     </LinkContainer>
                     <Navbar.Brand href="#" onClick={this.onLogout}>
-                        {this.props.user.currentUser.picture ? (
+                        {this.props.user.currentUser.profileImageUrl ? (
                                             <Image 
-                                            src={this.props.user.currentUser.picture} 
+                                            src={this.props.user.currentUser.profileImageUrl} 
                                             alt={this.props.user.currentUser.name}
                                             width={26} height={26}
                                             roundedCircle

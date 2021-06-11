@@ -1,6 +1,7 @@
 package io.github.dayco.uaa.user.ui.dto;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,26 +12,27 @@ import lombok.NoArgsConstructor;
 @Getter
 public class UserDto {
     private String userId;
-    private String email;
-    private Integer age;
-    private Integer gender;
-    private String picture;
+    private Optional<String> email;
+    private Optional<Integer> age;
+    private Optional<Integer> gender;
+    private Optional<String> profileImageUrl;
     private LocalDateTime createTime;
-    private LocalDateTime modifyTime;
+    private LocalDateTime updateTime;
 
     @Builder
-    public UserDto(String userId, String email,
-                                 Integer age,
-                                 Integer gender,
-                                 String picture,
-                                 LocalDateTime createTime,
-                                 LocalDateTime modifyTime) {
+    public UserDto(String userId,
+                   Optional<String> email,
+                   Optional<Integer> age,
+                   Optional<Integer> gender,
+                   Optional<String> profileImageUrl,
+                   LocalDateTime createTime,
+                   LocalDateTime updateTime) {
         this.userId = userId;
         this.email = email;
         this.age = age;
         this.gender = gender;
-        this.picture = picture;
+        this.profileImageUrl = profileImageUrl;
         this.createTime = createTime;
-        this.modifyTime = modifyTime;
+        this.updateTime = updateTime;
     }
 }

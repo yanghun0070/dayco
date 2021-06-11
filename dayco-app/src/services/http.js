@@ -177,18 +177,37 @@ export function deletePostsComment(commentId) {
 }
 
 //Profile 변경한다.
-export function changeProfile(email, pw, fileBase64, fileName) {
+export function changeProfile(fileBase64, fileName) {
     const token = Cookies.get("token") ? Cookies.get("token") : null;
+    /**
+     * application/x-www-form-urlencoded: &으로 분리되고,
+     * "=" 기호로 값과 키를 연결하는 key-value tuple로 인코딩되는 값이다.
+     * 영어 알파벳이 아닌 문자들은 percent encoded 으로 인코딩된다. 
+     * 따라서, 이 content type은 바이너리 데이터에 사용하기에는 적절치 않다. 
+     * (바이너리 데이터에는 use multipart/form-data 를 사용하는 것이 적절하다.)
+     * 
+     * query string 으로 던질 시에 http request header size 가 8kb 가 넘어가서 400 에러가 떨어진다.(Headers: 8.05 KB,  Body: 0B)
+     * 톰캣에서 headers size(start line + header) 가 limit 제한이 8kb 라 http status 가 400  이 떨어진다 한다.
+     * form-data 형식으로 변경해서 해결함 (Body: 7.61 KB, Headers: 542 B)
+     * {@see https://datatracker.ietf.org/doc/html/rfc2616#section-4.1}
+     * 
+     * {@code POST /profile/change HTTP/1.1\r\n} 
+     * {@code POST /profile/change?fileBase64=iVBORw0KGgo...] HTTP/1.1\r\n} 
+     * 
+     * 
+     * @see https://developer.mozilla.org/ko/docs/Web/HTTP/Methods/POST
+     * @see https://httpwg.org/specs/rfc7231.html#payload
+     * @see https://stackoverflow.com/questions/5876809/do-http-post-methods-send-data-as-a-querystring/5876931
+     */
+    const formData = new FormData();
+    formData.append("fileBase64", (fileBase64) ? fileBase64 : null); 
+    formData.append("fileName", (fileName) ? fileName : null); 
 
-    return axios.post(API_BASE_URL + "/profile/change", {
-         email: (email) ? email: null,
-         password: (pw) ? pw : null,
-         fileBase64: (fileBase64) ? fileBase64 : null,
-         fileName: (fileName) ? fileName : null
-    }, {
-        headers: {
-            'Content-type': 'application/json',
-            'Authorization': token
-        }
-    });
+    return axios.post(API_BASE_URL + "/profile/change", formData,
+        {
+            headers: {
+                'Content-type': 'multipart/form-data',
+                'Authorization': token
+            }
+        });
 }
