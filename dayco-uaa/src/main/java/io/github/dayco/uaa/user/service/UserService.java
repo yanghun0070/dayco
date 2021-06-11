@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.user.application;
+package io.github.dayco.uaa.user.service;
 
 import java.util.Optional;
 
@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 
 import io.github.dayco.uaa.user.domain.User;
 import io.github.dayco.uaa.manager.domain.UserAuthorization;
-import io.github.dayco.uaa.user.infra.UserAuthorizationJpaRepository;
-import io.github.dayco.uaa.user.infra.UserJpaRepository;
+import io.github.dayco.uaa.user.repository.UserAuthorizationJpaRepository;
+import io.github.dayco.uaa.user.repository.UserJpaRepository;
 
 @Service
 public class UserService {

@@ -3,28 +3,21 @@ package io.github.dayco.uaa.user.ui;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.Map;
-import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.dayco.uaa.auth.config.CurrentUser;
-import io.github.dayco.uaa.auth.ui.AuthenticationController;
 import io.github.dayco.uaa.common.presentation.vo.GlobalMessage;
 import io.github.dayco.uaa.common.presentation.vo.Result;
-import io.github.dayco.uaa.user.application.ProfileService;
-import io.github.dayco.uaa.user.application.UserService;
+import io.github.dayco.uaa.user.service.ProfileService;
+import io.github.dayco.uaa.user.service.UserService;
 import io.github.dayco.uaa.user.domain.User;
-import io.github.dayco.uaa.user.ui.dto.ProfileDto;
 
 @RestController
 @RequestMapping("/profile")

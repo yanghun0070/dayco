@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.dayco.uaa.auth.application.AuthenticationService;
+import io.github.dayco.uaa.auth.service.AuthenticationService;
 import io.github.dayco.uaa.auth.dto.SessionUser;
 import io.github.dayco.uaa.common.presentation.vo.GlobalMessage;
 import io.github.dayco.uaa.common.presentation.vo.Result;

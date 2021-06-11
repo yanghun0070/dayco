@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.manager.infra;
+package io.github.dayco.uaa.manager.repository;
 
 import java.util.List;
 

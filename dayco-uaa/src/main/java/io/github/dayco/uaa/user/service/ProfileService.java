@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.user.application;
+package io.github.dayco.uaa.user.service;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.github.dayco.uaa.user.domain.Profile;
 import io.github.dayco.uaa.user.domain.User;
-import io.github.dayco.uaa.user.infra.ProfileJpaRepository;
-import io.github.dayco.uaa.user.infra.UserJpaRepository;
+import io.github.dayco.uaa.user.repository.ProfileJpaRepository;
+import io.github.dayco.uaa.user.repository.UserJpaRepository;
 import io.minio.BucketExistsArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MakeBucketArgs;

@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.dayco.uaa.auth.config.CurrentUser;
-import io.github.dayco.uaa.user.application.ProfileService;
-import io.github.dayco.uaa.user.application.UserService;
+import io.github.dayco.uaa.user.service.ProfileService;
+import io.github.dayco.uaa.user.service.UserService;
 import io.github.dayco.uaa.user.domain.User;
 import io.github.dayco.uaa.user.ui.dto.UserDto;
 

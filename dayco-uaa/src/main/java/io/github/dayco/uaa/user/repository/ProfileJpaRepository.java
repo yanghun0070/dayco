@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.user.infra;
+package io.github.dayco.uaa.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

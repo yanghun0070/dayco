@@ -7,7 +7,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import io.github.dayco.uaa.manager.application.ManagerService;
+import io.github.dayco.uaa.manager.service.ManagerService;
 
 public class UrlResourceMapFactoryBean
         implements FactoryBean<LinkedHashMap<RequestMatcher, List<ConfigAttribute>>> {

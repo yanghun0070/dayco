@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.manager.application;
+package io.github.dayco.uaa.manager.service;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -10,13 +10,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Service;
 
-import io.github.dayco.uaa.auth.application.UaaUserDetailService;
+import io.github.dayco.uaa.auth.service.UaaUserDetailService;
 import io.github.dayco.uaa.manager.domain.Authorization;
 import io.github.dayco.uaa.manager.domain.Resource;
-import io.github.dayco.uaa.manager.infra.AuthorizationJpaRepository;
-import io.github.dayco.uaa.manager.infra.ResourceJpaRepository;
+import io.github.dayco.uaa.manager.repository.AuthorizationJpaRepository;
+import io.github.dayco.uaa.manager.repository.ResourceJpaRepository;
 import io.github.dayco.uaa.manager.domain.UserAuthorization;
-import io.github.dayco.uaa.user.infra.UserAuthorizationJpaRepository;
+import io.github.dayco.uaa.user.repository.UserAuthorizationJpaRepository;
 
 @Service
 public class ManagerService {
