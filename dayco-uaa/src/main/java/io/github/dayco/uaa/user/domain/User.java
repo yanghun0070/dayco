@@ -12,7 +12,9 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -50,17 +52,15 @@ public class User implements UserDetails {
     @Column
     private Integer gender;
 
-    @Column(length = 1000)
-    private String picture;
-
-    @Column
-    private String profileFileName;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private Profile profile;
 
     @Column
     private LocalDateTime createTime;
 
     @Column
-    private LocalDateTime modifyTime;
+    private LocalDateTime updateTime;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAuthorization> userAuthorizations = new ArrayList<>();
@@ -69,67 +69,36 @@ public class User implements UserDetails {
         this.userId = userId;
         this.password = new Password(password);
         this.createTime = LocalDateTime.now();
-        this.modifyTime = LocalDateTime.now();
+        this.updateTime = LocalDateTime.now();
     }
 
-    public User(String userId, String password, String picture) {
+    public User(String userId, String password, String imageUrl) {
         this(userId, password);
-        this.picture = picture;
+        this.profile = new Profile(userId, imageUrl);
     }
 
-    public User(String userId, String password, String email, String picture) {
-        this(userId, password, picture);
+    public User(String userId, String password, String email, String imageUrl) {
+        this(userId, password, imageUrl);
         this.email = new Email(email);
-
+        this.profile = new Profile(userId, imageUrl);
     }
 
-    public User update(String userId, String picture) {
+    public User update(String userId, String imageUrl) {
         this.userId = userId;
-        this.picture = picture;
-        this.modifyTime = LocalDateTime.now();
+        this.profile = new Profile(userId, imageUrl);
+        this.updateTime = LocalDateTime.now();
         return this;
     }
 
+    /**
+     * @todo 추후에 나이, 성 관련하여 추가할 수 있는 기능 추가
+     */
     public User update(String userId, String password, Integer age, Integer gender) {
         this.userId = userId;
         this.password = new Password(password);
         this.age = age;
         this.gender = gender;
-        this.modifyTime = LocalDateTime.now();
-        return this;
-    }
-
-    public User update(
-            String userId,
-            Optional<String> email,
-            Optional<String> password,
-            Optional<String> profileFileName,
-            Optional<String> profileUrl) {
-
-        this.userId = userId;
-        if(email.isPresent()) {
-            this.email = new Email(email.get());
-        }
-        if(password.isPresent()) {
-            this.password = new Password(password.get());
-        }
-        if(profileFileName.isPresent()) {
-            this.profileFileName = profileFileName.get();
-        }
-        if(profileUrl.isPresent()) {
-            this.picture = profileUrl.get();
-            System.out.println(this.picture);
-        }
-        this.modifyTime = LocalDateTime.now();
-        return this;
-    }
-
-    public User profileUpdate(String userId, Optional<String> profileUrl) {
-        this.userId = userId;
-        if(profileUrl.isPresent()) {
-            this.picture =  profileUrl.get();
-        }
-        this.modifyTime = LocalDateTime.now();
+        this.updateTime = LocalDateTime.now();
         return this;
     }
 
@@ -163,8 +132,8 @@ public class User implements UserDetails {
         return Optional.ofNullable(email);
     }
 
-    public Optional<String> getPicture() {
-        return Optional.ofNullable(picture);
+    public Optional<Profile> getProfile() {
+        return Optional.ofNullable(profile);
     }
 
     public void setEmail(String email) {

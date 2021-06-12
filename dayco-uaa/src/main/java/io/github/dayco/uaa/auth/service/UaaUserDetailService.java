@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.auth.application;
+package io.github.dayco.uaa.auth.service;
 
 import java.util.stream.Collectors;
 
@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import io.github.dayco.uaa.user.domain.User;
-import io.github.dayco.uaa.user.infra.UserJpaRepository;
+import io.github.dayco.uaa.user.repository.UserJpaRepository;
 
 @Service("uaaUserDetailsService")
 public class UaaUserDetailService implements UserDetailsService {

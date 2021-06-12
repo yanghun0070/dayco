@@ -16,7 +16,7 @@ import io.github.dayco.uaa.auth.dto.SessionUser;
 import io.github.dayco.uaa.manager.domain.UserAuthorization;
 import io.github.dayco.uaa.social.domain.SocialLogin;
 import io.github.dayco.uaa.user.domain.User;
-import io.github.dayco.uaa.user.infra.UserJpaRepository;
+import io.github.dayco.uaa.user.repository.UserJpaRepository;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {

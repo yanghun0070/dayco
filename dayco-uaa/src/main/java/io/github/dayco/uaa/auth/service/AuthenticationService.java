@@ -1,4 +1,4 @@
-package io.github.dayco.uaa.auth.application;
+package io.github.dayco.uaa.auth.service;
 
 
 import java.util.HashMap;
@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 import io.github.dayco.uaa.auth.config.JwtTokenProvider;
 import io.github.dayco.uaa.auth.dto.SessionUser;
 import io.github.dayco.uaa.auth.exception.InvalidJwtAuthenticationException;
-import io.github.dayco.uaa.user.application.UserService;
+import io.github.dayco.uaa.user.service.UserService;
 import io.github.dayco.uaa.user.domain.User;
 
 @Service

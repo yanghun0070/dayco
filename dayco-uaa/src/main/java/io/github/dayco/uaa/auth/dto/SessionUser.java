@@ -1,7 +1,9 @@
 package io.github.dayco.uaa.auth.dto;
 
 import java.io.Serializable;
+import java.util.Optional;
 
+import io.github.dayco.uaa.user.domain.Profile;
 import io.github.dayco.uaa.user.domain.User;
 
 import lombok.AllArgsConstructor;
@@ -21,13 +23,13 @@ public class SessionUser implements Serializable {
     private String userId;
     private String email;
     private String password;
-    private String picture;
+    private Optional<Profile> profile;
     private String registrationId;
 
     public SessionUser(User user) {
         this.userId = user.getUserId();
         this.email = (user.getEmail().isPresent()) ? user.getEmail().get().getEmail() : "";;
-        this.picture = (user.getPicture().isPresent()) ? user.getPicture().get() : "";
+        this.profile = user.getProfile();
     }
 
     public SessionUser(User user, String registrationId) {

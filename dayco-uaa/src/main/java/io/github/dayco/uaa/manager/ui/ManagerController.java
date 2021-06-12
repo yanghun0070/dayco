@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.dayco.uaa.manager.application.ManagerService;
+import io.github.dayco.uaa.manager.service.ManagerService;
 import io.github.dayco.uaa.manager.domain.Authorization;
 import io.github.dayco.uaa.manager.domain.Resource;
 import io.github.dayco.uaa.manager.domain.UserAuthorization;

@@ -12,3 +12,22 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: daycouser
       MYSQL_PASSWORD: daycouser
+  minio:
+    container_name: dayco-minio
+    image: minio/minio
+    restart: always
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+      MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    command: server /data
+  redis:
+    container_name: dayco-redis
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    volumes:
+      - /Users/yanghun007/dayco/data/redis:/data
+    entrypoint: redis-server --appendonly yes

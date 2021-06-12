@@ -13,6 +13,7 @@ file:
     url: http://localhost:9000
     accessKey: AKIAIOSFODNN7EXAMPLE
     secretKey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    savedDirectory: /Users/yanghun007/Documents/image
 
 logging:
   level:
